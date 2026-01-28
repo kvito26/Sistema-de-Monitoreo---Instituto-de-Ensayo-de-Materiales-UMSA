@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Registrar Usuario{% endblock %}
+{% block usuariosLink %}active{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+	<div class="d-flex align-items-center py-4 bg-body-tertiary" style="">
+		<main class="w-100 m-auto mt-5" style="max-width: 350px">
+			<h1 class="h2 text-center mb-4 fw-normal">Registrar Usuario</h1>
+
+			<form method="POST" action="/umsa-iem/public/?action=procesoRegistrar" class="needs-validation" novalidate>
+				<div class="form-floating mb-3">
+					<input type="text" class="form-control" id="floatingInput" name="nombre" placeholder="Nombre" required>
+					<label for="floatingInput">Nombre</label>
+				</div>
+
+				<div class="form-floating mb-3">
+					<input type="text" class="form-control" id="floatingInput" name="apellido" placeholder="Apellido" required>
+					<label for="floatingInput">Apellido</label>
+				</div>
+
+				<div class="form-floating mb-3">
+					<input type="text" class="form-control" id="floatingInput" name="username" placeholder="usuario" required>
+					<label for="floatingInput">Nombre de Usuario</label>
+				</div>
+
+				<div class="form-floating mb-3">
+					<input type="password" class="form-control" id="floatingPassword1" name="password" placeholder="Contraseña" required>
+					<label for="floatingPassword1">Contraseña</label>
+				</div>
+
+				<div class="form-floating">
+					<input type="password" class="form-control" id="floatingPassword2" placeholder="Repetir Contraseña" required>
+					<label for="floatingPassword2">Repetir Contraseña</label>
+				</div>
+
+				<button type="submit" class="btn btn-warning mt-4 mb-3 w-100">Registrar</button>
+			</form>
+		</main>
+	</div>
+
+</div>
+
+
+<script>
+// Example starter JavaScript for disabling form submissions if there are invalid fields
+(() => {
+  'use strict'
+
+  // Fetch all the forms we want to apply custom Bootstrap validation styles to
+  const forms = document.querySelectorAll('.needs-validation')
+
+  // Loop over them and prevent submission
+  Array.from(forms).forEach(form => {
+    form.addEventListener('submit', event => {
+      if (!form.checkValidity()) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+
+      form.classList.add('was-validated')
+    }, false)
+  })
+})()
+
+</script>
+
+
+
+
+{% endblock %}

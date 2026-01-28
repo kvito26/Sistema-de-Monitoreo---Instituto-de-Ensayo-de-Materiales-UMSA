@@ -1,0 +1,139 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ambientes{% endblock %}
+{% block ambientesLink %}active{% endblock %}
+
+{% block body %}
+<div class="container-fluid mt-5">
+
+	<div class="row">
+		<div class="col-md-4">
+			<div class="row">
+				<div class="col-md-12">
+
+					<div class="card w-100 mb-3 shadow">
+						<h5 class="card-header text-center text-white fs-4 bg-danger" id="ws-status">Ambiente 2</h5>
+					  <div class="card-body">
+							<table class="table table-borderless">
+								<tr>
+									<td class="text-end">
+										<span class="fs-3"><b>Temp: </b></span>
+									</td>
+									<td>
+										<span class="fs-2" id="temp1-vivo">--.-</span>
+										<small class="fs-3"> °C</small>
+									</td>
+								</tr>
+								<tr>
+									<td class="text-end">
+										<span class="fs-3"><b>Hum: </b></span>
+									</td>
+									<td>
+										<span class="fs-2" id="hum1-vivo">--.-</span>
+										<small class="fs-3"> %</small>
+									</td>
+								</tr>
+							</table>
+							<p class="card-text text-center fs-5"><small>Última lectura: <span id="fecha1-vivo">--.--</span></small></p>
+					  </div>
+					</div>
+
+				</div>
+				
+				<div class="col-md-12">
+
+					<div class="card w-100 mb-3 shadow">
+	
+					<h5 class="card-header text-center">Estados de Conexión</h5>
+					  <div class="card-body">
+
+							<table class="table table-borderless">
+								<tr>
+									<td class="text-end"><span>Ventilador: </span></td>
+									<td><span id="estadoVent" class="badge bg-orange">Sin Datos</span>
+								</tr>
+								<tr>
+									<td class="text-end"><span>Calentador: </span></td>
+									<td><span id="estadoCalent" class="badge bg-orange">Sin Datos</span>
+								</tr>
+								<tr>
+									<td class="text-end">Nivel de Agua: </td>
+									<td><span id="estadoNivel" class="badge bg-orange">Sin Datos</span></td>
+								</tr>
+								<tr>
+									<td class="text-end">Humidificador: </td>
+									<td><span id="estadoHumi" class="badge bg-orange">Sin Datos</span></td>
+								</tr>
+							</table>
+
+					  </div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-8">
+
+			<div class="card shadow mb-3">
+			  <div class="card-header">
+				<ul class="nav nav-tabs card-header-tabs">
+				  <li class="nav-item">
+					<a class="nav-link active" aria-current="true" role="button" id="tab_man" onclick="contenedorManual(this);">Manual</a>
+				  </li>
+				  <li class="nav-item">
+					<a class="nav-link" aria-current="true" role="button" id="tab_auto" onclick="contenedorAutomatico(this);">Automatico</a>
+				  </li>
+				</ul>
+			  </div>
+			  <div class="card-body" id="contenedor_man_auto">
+					<h5 class="card-title text-center">Control del Ventilador</h5>
+					<div class="row">
+						<div class="col-5 text-center">
+							<label class="form-label">Operación</label>
+							<br>
+							<button type="button" class="btn btn-success me-1 mb-2" onclick="enviarOrden(1);">Activar</button>		
+							<button type="button" class="btn btn-danger me-1 mb-2" onclick="enviarOrden(0);">Desactivar</button>		
+						</div>
+						<div class="col-7 text-center">
+							<label for="vel_vent" class="form-label">Intensidad del Ventilador</label>
+							<input type="range" class="form-range" min="0" max="100" value="0" id="vel_vent">
+							<small><output for="vel_vent" id="vel_vent_out" aria-hidden="true">0</output> [%] | </small>
+							<small><output for="vel_vent" id="caudal_vent" aria-hidden="true">0.0</output> [m/s]</small>
+						</div>
+					</div>
+					<br>
+					<br>
+
+					<div class="row">
+						<div class="col-6 text-center">
+							<h5 class="card-title text-center">Control del Calentador</h5>
+							<label class="form-label">Operación</label>
+							<br>
+							<button type="button" class="btn btn-success me-1 mb-2">Activar</button>		
+							<button type="button" class="btn btn-danger me-1 mb-2">Desactivar</button>		
+						</div>
+						<div class="col-6 text-center">
+							<h5 class="card-title text-center">Control del Hudificador</h5>
+							<label class="form-label">Operación</label>
+							<br>
+							<button type="button" class="btn btn-success me-1 mb-2">Activar</button>		
+							<button type="button" class="btn btn-danger me-1 mb-2">Desactivar</button>		
+						</div>
+					</div>
+					<div class="row">
+						<div class="mt-5 text-end">
+							<a class="btn btn-danger" href="/umsa-iem/public/?action=ambientes" role="button"><i class="bi bi-arrow-left"></i> Atrás</a>
+						</div>
+					</div>
+					<br>
+
+			  </div>
+			</div>
+
+		</div>
+	</div>
+
+	<a class="btn btn-danger" href="/umsa-iem/public/?action=ambientes" role="button"><i class="bi bi-arrow-left"></i> Atrás</a>
+
+{% endblock %}

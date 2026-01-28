@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ambientes{% endblock %}
+{% block ambientesLink %}active{% endblock %}
+
+{% block body %}
+<div class="container mt-2">
+	<h1>Aqui el ambiente 1</h1>
+
+	<br>
+
+
+<div class="card text-center shadow">
+    <div class="card-header bg-dark text-white">Control ESP32 (Swoole)</div>
+    <div class="card-body">
+        <h5 class="card-title">Estado del Sistema: <span id="ws-status" class="badge bg-danger">Desconectado</span></h5>
+        
+        <div class="mt-4">
+            <button onclick="enviarComando(1)" class="btn btn-success btn-lg mx-2">ENCENDER</button>
+            <button onclick="enviarComando(0)" class="btn btn-danger btn-lg mx-2">APAGAR</button>
+        </div>
+        
+        <div id="log" class="mt-3 text-muted small"></div>
+    </div>
+</div>
+
+<script>
+    // IP de tu servidor Linux (Asegúrate que sea la correcta 192.168.1.2)
+    const socket = new WebSocket('ws://192.168.1.224:8080');
+    const statusSpan = document.getElementById('ws-status');
+    const logDiv = document.getElementById('log');
+
+    socket.onopen = function(e) {
+        statusSpan.className = 'badge bg-success';
+        statusSpan.innerText = 'Conectado';
+        console.log("Conexión establecida con Swoole");
+    };
+
+    socket.onmessage = function(event) {
+        console.log("Recibido del servidor:", event.data);
+        // Aquí podrías procesar si el ESP32 envía confirmación
+        try {
+            let datos = JSON.parse(event.data);
+            if(datos.tipo === 'info') {
+                logDiv.innerText = "ESP32 dice: " + datos.valor;
+            }
+        } catch (e) {}
+    };
+
+    socket.onclose = function(event) {
+        statusSpan.className = 'badge bg-danger';
+        statusSpan.innerText = 'Desconectado';
+        alert('Se perdió la conexión con el servidor');
+    };
+
+    function enviarComando(estado) {
+        if (socket.readyState === WebSocket.OPEN) {
+            const payload = JSON.stringify({
+                tipo: "led",
+                valor: estado
+            });
+            socket.send(payload);
+            console.log("Enviado:", payload);
+        } else {
+            alert("No hay conexión con el servidor");
+        }
+    }
+</script>
+
+
+	<a class="btn btn-danger mt-5" href="/umsa-iem/public/?action=ambientes" role="button"><i class="bi bi-arrow-left"></i> Atrás</a>
+</div>
+
+
+
+{% endblock %}

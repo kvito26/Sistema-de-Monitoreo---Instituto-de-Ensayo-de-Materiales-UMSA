@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>{% block title %}{% endblock %}</title>
+	<!-- Agregando el soporte para el framework de css Bootstrap -->
+	<link rel="stylesheet" href="/umsa-iem/public/css/bootstrap-5.3.8-dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/umsa-iem/public/css/bootstrap-icons-1.13.1/bootstrap-icons.css">
+	<script defer src="/umsa-iem/public/css/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+	<style>
+  .bg-orange {
+    background-color: var(--bs-orange) !important;
+  }
+	</style>
+
+</head>
+<body>
+	<!-- El nav bar de la pagina web -->
+	<nav class="navbar navbar-expand-md bg-success fixed-top shadow-sm">
+		<div class="container-fluid">
+			<a class="navbar-brand text-white" href="/umsa-iem/public/?action=ambientes"><b>IEM-UMSA</b></a>
+			{% if isLoggedIn() %}
+			 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+				 <span class="navbar-toggler-icon"></span>
+			</button>
+
+			<div class="collapse navbar-collapse mx-auto" id="navbarNavAltMarkup">
+				<ul class="navbar-nav mx-auto text-center">
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle opacity-100 {% block ambientesLink %}{% endblock %}" href="#" data-bs-toggle="dropdown" aria-expanded="false">Ambientes</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/umsa-iem/public/?action=ambiente1">Ambiente 1</a></li>
+								<li><a class="dropdown-item" href="/umsa-iem/public/?action=ambiente2">Ambiente 2</a></li>
+								<li><a class="dropdown-item" href="/umsa-iem/public/?action=ambiente3">Ambiente 3</a></li>
+								<li><hr class="dropdown-divider"></li>
+								<li><a class="dropdown-item" href="/umsa-iem/public/?action=ambientes">Ambientes</a></li>
+							</ul>
+					</li>
+
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle opacity-100 {% block reportesLink %}{% endblock %}" href="#" data-bs-toggle="dropdown" aria-expanded="false">Reportes</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/umsa-iem/public/?action=reportes_amb1">Reportes Amb-1</a></li>
+								<li><a class="dropdown-item" href="/umsa-iem/public/?action=reportes_amb2">Reportes Amb-2</a></li>
+								<li><a class="dropdown-item" href="/umsa-iem/public/?action=reportes_amb3">Reportes Amb-3</a></li>
+							</ul>
+					</li>
+
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle opacity-100 {% block usuariosLink %}{% endblock %}" href="#" data-bs-toggle="dropdown" aria-expanded="false">Usuarios</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item {% block gestionUserLink %}{% endblock %}" href="/umsa-iem/public/?action=gestion_usuarios">Gestión de Usuarios</a></li>
+								<li><hr class="dropdown-divider"></li>
+								<li><a class="dropdown-item {% block registrarLink %}{% endblock %}" href="/umsa-iem/public/?action=registrar">Registrar Usuario</a></li>
+							</ul>
+					</li>
+
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle opacity-100 {% block dispositivosLink %}{% endblock %}" href="#" data-bs-toggle="dropdown" aria-expanded="false">Dispositivos</a>
+							<ul class="dropdown-menu">
+								<li><a class="dropdown-item" href="/umsa-iem/public/?action=gestion_dispositivos">Gestión de Dispositivos</a></li>
+								<li><hr class="dropdown-divider"></li>
+								<li><a class="dropdown-item" href="/umsa-iem/public/?action=registro_dispositivo">Agregar Dispositivo</a></li>
+							</ul>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link opacity-100" href="/umsa-iem/public/?action=acerca_de">Acerca de</a>
+					</li>
+				</ul>
+				{% endif %}
+				
+				<div class="d-flex flex-column flex-md-row gap-2 align-items-center my-auto py-md-0 py-0" style="height: 45px">
+					<div class="p-2">
+						<div class="d-flex align-items-center form-switch" style="height: 55px;">
+							<i class="bi bi-brightness-high-fill me-5"></i>
+							<input class="form-check-input me-1" type="checkbox" id="darkModeSwitch" checked>
+							<i class="bi bi-moon-stars-fill"></i>
+						</div>
+					</div>
+					{% if isLoggedIn() %}
+					<div class="vr my-auto" style="height: 35px;"></div>
+					<div class="p-2">
+						<a class="btn btn-outline-warning" href="/umsa-iem/public/?action=logout">Salir</a>
+					</div>
+					{% endif %}
+				</div>
+			</div>
+
+		</div>
+	</nav>
+
+
+<!-- Bootstrap 5 switch -->
+<!-- interruptor de temas oscuro y claro -->
+<br>
+
+<script>
+document.addEventListener('DOMContentLoaded', (event) => {
+    const htmlElement = document.documentElement;
+    const switchElement = document.getElementById('darkModeSwitch');
+
+    // Set the default theme to dark if no setting is found in local storage
+    const currentTheme = localStorage.getItem('bsTheme') || 'dark';
+    htmlElement.setAttribute('data-bs-theme', currentTheme);
+    switchElement.checked = currentTheme === 'dark';
+
+    switchElement.addEventListener('change', function () {
+        if (this.checked) {
+            htmlElement.setAttribute('data-bs-theme', 'dark');
+            localStorage.setItem('bsTheme', 'dark');
+        } else {
+            htmlElement.setAttribute('data-bs-theme', 'light');
+            localStorage.setItem('bsTheme', 'light');
+        }
+    });
+});
+</script>
+<!-- AQUI TERMINA EL HEADER, A PARTIR DE AQUI DEPENDE DE LA PAGINA ESPECIFICA -->
+
+
+	{% block body %}
+	{% endblock %}
+	
+</body>
+</html>

@@ -1,0 +1,45 @@
+<?php
+// Carga el autoloader de tu proyecto MVC por si necesitas usar Modelos después
+require dirname(__DIR__) . '/vendor/autoload.php';
+
+use Swoole\WebSocket\Server;
+use Swoole\Http\Request;
+use Swoole\WebSocket\Frame;
+
+// 1. Crear el servidor en el puerto 8080 escuchando a TODOS (0.0.0.0)
+$server = new Server("0.0.0.0", 8080);
+
+echo "Servidor Swoole iniciado en ws://0.0.0.0:8080\n";
+
+// 2. Evento: Alguien se conecta
+$server->on("Start", function (Server $server) {
+    echo "Swoole WebSocket Server is started.\n";
+});
+
+$server->on('Open', function(Server $server, Request $request) {
+    echo "Conexión entrante ID: {$request->fd}\n";
+});
+
+// 3. Evento: Llega un mensaje (aquí está la magia)
+$server->on('Message', function(Server $server, Frame $frame) {
+    echo "Mensaje recibido de {$frame->fd}: {$frame->data}\n";
+
+    // Decodificar el JSON recibido para ver qué es
+    $data = json_decode($frame->data, true);
+
+    // LÓGICA DE BROADCAST (Retransmisión)
+    // Reenviamos el mensaje a todos los conectados MENOS al que lo envió
+    foreach ($server->connections as $fd) {
+        if ($server->isEstablished($fd) && $fd !== $frame->fd) {
+            $server->push($fd, $frame->data);
+        }
+    }
+});
+
+// 4. Evento: Alguien se desconecta
+$server->on('Close', function(Server $server, int $fd) {
+    echo "Cliente {$fd} desconectado.\n";
+});
+
+// Iniciar el bucle
+$server->start();

@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestión de Usuarios{% endblock %}
+{% block usuariosLink %}active{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+	<h2 class="text-center">Gestión de Usuarios</h2>
+	
+	<table class="table table-striped table-hover mt-3 table-sm" style="vertical-align: middle;">
+		<thead>
+			<tr>
+				<th scope="col">#Resgistro</th>
+				<th scope="col">Nombre(s)</th>
+				<th scope="col">Apellido(s)</th>
+				<th scope="col">Nombre de Usuario</th>
+				<th scope="col">Estado</th>
+				<th scope="col">Acciones</th>
+				<th scope="col"></th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for usuario in usuarios %}
+			<tr>
+				<th scope="row">{{ usuario.id }}</th>
+				<td>{{ usuario.nombre }}</td>
+				<td>{{ usuario.apellido }}</td>
+				<td>{{ usuario.username }}</td>
+				{% if usuario.estado == 1 %}
+				<td><span class="badge rounded-pill text-bg-success">Activo</span></td>
+				{% elseif usuario.estado == 0 %}
+				<td><span class="badge rounded-pill text-bg-danger">Bloqueado</span></td>
+				{% endif %}
+
+
+				<td>
+				{% if usuario.estado == 1 %}
+				<form method="POST" action="/umsa-iem/public/?action=borrar_usuario">
+						<input type="hidden" name="id" value="{{ usuario.id }}">
+						<button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Esta seguro de eliminar al usuario {{ usuario.username }}?');">Eliminar</button>
+					</form>
+					<form method="POST" action="/umsa-iem/public/?action=editar_estado">
+						<input type="hidden" name="id" value="{{ usuario.id }}">
+						<input type="hidden" name="estado" value="0">
+						<button type="submit" class="btn btn-outline-warning btn-sm" onclick="return confirm('¿Bloquear al usuario {{ usuario.username }}?');">Bloquear</button>
+					</form>
+				{% elseif usuario.estado == 0 %}
+					<form method="POST" action="/umsa-iem/public/?action=editar_estado">
+						<input type="hidden" name="id" value="{{ usuario.id }}">
+						<input type="hidden" name="estado" value="1">
+						<button type="submit" class="btn btn-outline-success btn-sm" onclick="return confirm('¿Habilitar al usuario {{ usuario.username }}?');">Habilitar</button>
+					</form>
+					<form method="POST" action="/umsa-iem/public/?action=borrar_usuario">
+						<input type="hidden" name="id" value="{{ usuario.id }}">
+						<button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Esta seguro de eliminar al usuario {{ usuario.username }}?');">Eliminar</button>
+					</form>
+				{% endif %}
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+
+</div>
+{% endblock %}

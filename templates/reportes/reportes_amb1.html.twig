@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reportes{% endblock %}
+{% block reportesLink %}active{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+	<h2 class="text-center">Reportes - Ambiente 1</h2>
+
+ <table class="table table-striped table-hover mt-3 table-sm" style="vertical-align: middle;">
+		<thead>
+			<tr>
+				<th scope="col">#</th>
+				<th scope="col">Temperatura [°C]</th>
+				<th scope="col">Humedad [%]</th>
+				<th scope="col">Fecha y Hora</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for ambiente in ambientes %}
+				{% if ambiente.dispositivo == 1 %}
+				<tr>
+					<th scope="row">{{ ambiente.id }}</th>
+					<td>{{ ambiente.temp }}</td>
+					<td>{{ ambiente.hum }}</td>
+					<td>{{ ambiente.fecha|date('Y-m-d H:i:s') }}</td>
+				</tr>
+				{% endif %}
+			{% endfor %}
+		</tbody>
+	</table>	
+
+</div>
+{% endblock %}
