@@ -1,0 +1,46 @@
+* Totem-Pole con Filtro de Desacoplo (Capacitor)
+* Q1, Q2: Inversores | Q3, Q4: Totem-Pole
+
+* --- Fuente de 5V con Ruido ---
+Vraw raw 0 DC 5V
+Vripple ripple_node raw SIN(0 0.5 100k)
+* Resistencia de fuente/línea para permitir el filtrado
+Rsource ripple_node vcc_filt 1
+
+* --- Punto 1: Condensador de Desacoplo ---
+Cdecoupling vcc_filt 0 200u
+
+* Entrada PWM 3.3V (10kHz)
+Vpwm input 0 PULSE(0 3.3 1u 10n 10n 50u 100u)
+
+* --- Etapas de Inversión ---
+R1 input b1 1k
+Q1 c1 b1 0 Q2N3904
+R2 vcc_filt c1 1k
+
+R3 c1 b2 1k
+Q2 c2 b2 0 Q2N3904
+R4 vcc_filt c2 1k
+
+* --- Etapa Totem-Pole ---
+Q3 vcc_filt c2 out_node Q2N3904
+Q4 0 c2 out_node Q2N3906
+
+* --- Carga ---
+Rload out_node 0 5k
+
+* Modelos
+.model Q2N3904 NPN(Is=6.734f Xti=3 Eg=1.11 Vaf=74.03 Bf=416.4 Rc=1)
+.model Q2N3906 PNP(Is=1.41f Xti=3 Eg=1.11 Vaf=18.7 Bf=180.7 Rc=1)
+
+.tran 1u 5m
+
+.control
+run
+* Graficamos: 
+* 1. El ruido original de la fuente (v(ripple_node))
+* 2. El voltaje filtrado que llega al Totem-Pole (v(vcc_filt))
+* 3. La salida final PWM (v(out_node))
+plot v(ripple_node) v(vcc_filt) v(out_node) title 'Efecto del Capacitor de Desacoplo'
+.endc
+.end

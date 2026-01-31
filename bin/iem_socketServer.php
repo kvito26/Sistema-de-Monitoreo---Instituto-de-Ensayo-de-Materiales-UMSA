@@ -29,6 +29,7 @@ $fd_registrados->column('id_disp', Table::TYPE_STRING, 64);
 $fd_registrados->column('ultima_actividad', Table::TYPE_INT);
 $fd_registrados->create();
 
+//aqui el array de feedbacks
 $lastFeeds = [];
 
 //creando los objetos servidor y controller del mismo. objeto del repositorio de los dispositivos
@@ -443,6 +444,23 @@ $server->on("message", function (Server $server, Frame $frame) use ($dispConecta
 // Listen to the WebSocket connection close event.
 $server->on('Close', function ($server, $fd) {
     echo "client-{$fd} is closed\n";
+});
+
+$server->on('ManagerStart', function(Server $server){
+	mensajesLog('INFO', "Manager del servidor iniciado", ['pid' => $server->manager_pid]);
+});
+
+$server->on('task', function(Server $server, int $task_id, int $src_worker_id, $data){
+	mensajesLog('TAREA', "Tarea procesada", [
+		'id_tarea' => $task_id,
+		'worker' => $src_worker_id,
+	]);
+
+	return ['estado' => 'completado', 'id_tarea' => $task_id];
+});
+
+$server->on('finish', function(Server $server, int $task_id, $data){
+	mensajesLog('TAREA', "Tarea finalizada", ['id_tarea' => $task_id]);
 });
 
 

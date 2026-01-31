@@ -239,6 +239,21 @@ function conectarWS(){
 			console.log("Connected to WebSocket server.");
 			contador_reconex = 0;
 
+
+// Latido cada 25 segundos
+setInterval(() => {
+	if (websocket.readyState === WebSocket.OPEN) {
+		const heartbeat = {
+			id_disp: "general",
+			action: "heartbeat",
+			estado: "vivo",
+		};
+		websocket.send(JSON.stringify(heartbeat));
+		console.log(heartbeat);
+	}
+}, 3000);
+
+
 			monitor1.classList.remove('bg-warning', 'bg-danger');
 		};
 	

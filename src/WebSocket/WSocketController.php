@@ -84,7 +84,7 @@ class WSocketController{
 			//haciendo una limpieza en el orm para no ocupar ram
 			$em->clear();
 		
-			echo "Feedback hecho para: " . $datos['id_disp'] . " con el estado: " . $datos['estado_ahora'] . PHP_EOL;
+			//echo "Feedback hecho para: " . $datos['id_disp'] . " con el estado: " . $datos['estado_ahora'] . PHP_EOL;
 		}
 		catch (\Exception $e){
 			echo "Hubo un error en el WSocketController.php (function procesoFeedback()): " . $e->getMessage() . PHP_EOL;

@@ -1,0 +1,35 @@
+* Convertidor PWM 3.3V a 5V NO INVERTIDO con Totem-Pole
+* Q1, Q2: Inversores para corregir fase | Q3, Q4: Salida Push-Pull
+
+Vcc vcc 0 DC 5V
+Vpwm input 0 PULSE(0 3.3 1u 10n 10n 50u 100u)
+
+* --- Etapa 1: Inversora ---
+R1 input b1 1k
+Q1 c1 b1 0 Q2N3904
+R2 vcc c1 1k
+
+* --- Etapa 2: Segunda Inversión (Corrige Fase) ---
+R3 c1 b2 1k
+Q2 c2 b2 0 Q2N3904
+R4 vcc c2 1k
+
+* --- Etapa 3: Totem-Pole de Salida ---
+Q3 vcc c2 out_node Q2N3904
+Q4 0 c2 out_node Q2N3906
+
+* --- Carga ---
+Rload out_node 0 14k
+
+* Modelos
+.model Q2N3904 NPN(Is=6.734f Xti=3 Eg=1.11 Vaf=74.03 Bf=416.4 Rc=1)
+.model Q2N3906 PNP(Is=1.41f Xti=3 Eg=1.11 Vaf=18.7 Bf=180.7 Rc=1)
+
+.tran 1u 500u
+
+.control
+run
+* Verás que v(input) y v(out_node) suben y bajan al mismo tiempo
+plot v(input) v(out_node) title 'PWM 5V NO INVERTIDO (Totem-Pole)'
+.endc
+.end

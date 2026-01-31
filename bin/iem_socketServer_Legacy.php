@@ -147,8 +147,6 @@ $ws_server->on('Close', function ($server, $fd) {
     echo "client-{$fd} is closed\n";
 });
 
-
-
 $ws_server->set([
 	'worker_num' => 3,
 	'max_request' => 1024,
