@@ -163,10 +163,11 @@ const DEVICE_ID = 'esp_amb1';
 
 //conectando al websocket
 //const wsServer = 'ws://10.245.59.12:8080';
-const wsServer = 'ws://192.168.1.229:8080';
+const wsServer = 'ws://192.168.1.8:8080';
 let websocket = null;
 let intervalo_reconex = 5000; //intentando reconectar cada 5s
 let contador_reconex = 0;
+let intervaloHeartbeat = null;
 
 //****************************************
 //RECOPILANDO ELEMENTOS DEL DOCUMENTO HTML
@@ -191,20 +192,26 @@ function conectarWS(){
 
 			//para el indicador de parpadeo
 			estadoMonitor1.classList.remove('bg-warning', 'bg-danger');
+			
+			 //limpiando heartbeat si lo hubiera
+			if (intervaloHeartbeat){
+				clearInterval(intervaloHeartbeat);
+				intervaloHeartbeat = null;
+			}
 
-// Latido cada 25 segundos
-setInterval(() => {
-	if (websocket.readyState === WebSocket.OPEN) {
-		const heartbeat = {
-			id_disp: DEVICE_ID,
-			action: "heartbeat",
-			estado: "vivo",
-		};
-		websocket.send(JSON.stringify(heartbeat));
-		console.log(heartbeat);
-	}
-}, 3000);
+			//intervalo de para enviar un heartbeat
+			intervaloHeartbeat = setInterval(() => {
+				if (websocket.readyState === WebSocket.OPEN) {
+					const heartbeat = {
+						id_disp: "cliente_web",
+						action: "heartbeat",
+						estado: "vivo",
+					};
 
+					websocket.send(JSON.stringify(heartbeat));
+					console.log(heartbeat);
+				}
+			}, 15000);
 
 		};
 
@@ -272,6 +279,12 @@ setInterval(() => {
 
 		//CERRAR
 		websocket.onclose = function (event) {
+			//limpiando heartbeat para la desconexion
+			if (intervaloHeartbeat){
+				clearInterval(intervaloHeartbeat);
+				intervaloHeartbeat = null;
+			}
+
 			console.log("Disconnected");
 			estadoMonitor1.classList.remove('bg-danger', 'bg-success');
 			estadoMonitor1.classList.add('bg-danger');

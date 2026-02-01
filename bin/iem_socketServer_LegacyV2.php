@@ -18,11 +18,13 @@ date_default_timezone_set('America/La_Paz');
 //creando una tabla en memoria compartida para guardar dispositivos autenticados
 $dispAutenticados = new Table(100);
 $dispAutenticados->column('fd', Table::TYPE_INT);
+$dispAutenticados->column('hora_conexion_cont', Table::TYPE_INT);
 $dispAutenticados->create();
 
 //creando una tabla en memoria compartida para guardar los clientes web
 $clientesWeb = new Table(1024);
-$clientesWeb->column('hora_conexion', Table::TYPE_INT);
+$clientesWeb->column('fd', Table::TYPE_INT);
+$clientesWeb->column('hora_conexion_web', Table::TYPE_INT);
 $clientesWeb->create();
 
 //creando los objetos servidor y controller del mismo. objeto del repositorio de los dispositivos
@@ -97,7 +99,7 @@ $server->on("open", function(Server $server, Request $request) use ($clientesWeb
 	]);
 
 	//asumiendo en primera instancia que es un cliente web
-	$clientesWeb->set($request->fd, ['hora_conexion' => time()]);
+	$clientesWeb->set($request->fd, ['fd' => $request->fd, 'hora_conexion_web' => time()]);
 	mensajesLog('INFO', "Conexion guardada por defecto en clientes web", ['fd' => $request->fd]);
 
 
@@ -108,6 +110,15 @@ $server->on("open", function(Server $server, Request $request) use ($clientesWeb
 	catch(Exception $e){
 		mensajesLog('ERROR', "Error al enviar el mensaje de bienvenida", ['error' => $e->getMenssage()]);
 	}
+});
+
+$server->on('workerError', function(Server $server, int $workerId, int $workerPid, int $exitCode, int $signal){
+    mensajesLog('CRITICO', "Worker crashed", [
+        'worker_id' => $workerId,
+        'pid' => $workerPid,
+        'exit_code' => $exitCode,
+        'signal' => $signal
+    ]);
 });
 
 //evento message (logica de funcionamiento del servidor), recibir datos json
@@ -134,8 +145,12 @@ $server->on("message", function (Server $server, Frame $frame) use ($dispAutenti
 		case 'autenticar':
 			//proceso de autenticacion y actualizacion de clientes web
 			if ($clientesWeb->exists($frame->fd)){
+				//contanto los clientes web y los dispositivos autenticados
+				echo "el numero de clientes web: " . $clientesWeb->count() . PHP_EOL;
+				echo "el numero de disp autenti: " . $dispAutenticados->count() . PHP_EOL;
+
 				//borrando de la tabla de clientes web y agregando a la tabla de registrados (autenticados)
-				echo "es el cliente web: " . $clientesWeb->get($frame->fd) . PHP_EOL;
+				echo "es el cliente web: " . $clientesWeb->get($frame->fd, 'fd') . PHP_EOL;
 				$clientesWeb->del($frame->fd);
 				mensajesLog('INFO', "Cliente borrado de lista webs", ['fd' => $frame->fd]);
 			}
@@ -144,6 +159,9 @@ $server->on("message", function (Server $server, Frame $frame) use ($dispAutenti
 
 			//log de autenticado y guardado en la tabla
 			mensajesLog("AUTENTICADO", "Se ha autenticado y guardado un nuevo dispositivo", ['dispositivo' => $datos_recibidos['id_disp']]);
+
+			echo "el numero de clientes web: " . $clientesWeb->count() . PHP_EOL;
+			echo "el numero de disp autenti: " . $dispAutenticados->count() . PHP_EOL;
 
 			break;
 
@@ -171,19 +189,31 @@ $server->on("message", function (Server $server, Frame $frame) use ($dispAutenti
 				]);
 
 				//reenviando a todos los clientes web
-				foreach($clientesWeb as $fd => $hora_conexion){
-					if ($server->isEstablished($fd)){
+				//imprimiendo todos los clitentes web
+				echo "\tClientes web listado: " . PHP_EOL;
+				foreach($clientesWeb as $fd_web => $datos){
+					echo "\t\tCliente web:" .  $datos['fd'] . " " . PHP_EOL;
+				}
+				//llamar a todos los clientes web
+				echo "***************************************************\n";
+				echo "\tNumero clientes web (int): " . $clientesWeb->count() . PHP_EOL;
+				echo "***************************************************\n";
+
+				foreach($clientesWeb as $fd => $datos){
+					$fd_web = (int) $datos['fd'];
+					if($server->isEstablished($fd_web)){
+						echo "**********estrellitas********" . PHP_EOL;
+						echo "fd web: " . $fd_web . PHP_EOL;
 						try{
-							echo "**********estrellitas********" . PHP_EOL;
-							$server->push($fd, $payloadWeb);
-							mensajesLog('INFO', "Mensaje emitido al cliente web", ['cliente_receptor' => $fd]);
+							$server->push($fd_web, $payloadWeb);
+							mensajesLog('INFO', "Datos TH emitido al cliente web", ['cliente_receptor' => $fd_web]);
 						}
 						catch(\Exception $e){
-							mensajesLog('ERROR', "Error al hacer el feedback al cliente web", ['error_feedback' => $fd]);
-
+							mensajesLog('ERROR', "Error al hacer el feedback TH al cliente web", ['error_feedback' => $fd_web]);
 						}
 					}
 				}
+				
 			//	foreach ($server->connections as $fd){
 			//		if ($server->isEstablished($fd) && $fd != $frame->fd && !isset($fd_registrados[$fd])){
 			//			$server->push($fd, $payloadWeb);
@@ -239,20 +269,32 @@ $server->on("message", function (Server $server, Frame $frame) use ($dispAutenti
 			try{
 				$controller->procesoFeedback($datos_recibidos);
 
-				foreach($server->connections as $fd){
-					echo "Cliente: " . $clientesWeb->get($fd) . PHP_EOL;
-					if($server->isEstablished($fd) && $clientesWeb->get($fd)){
+				//imprimiendo todos los clitentes web
+				echo "\tClientes web listado: " . PHP_EOL;
+				foreach($clientesWeb as $fd_web => $datos){
+					echo "\t\tCliente web:" . $datos['fd'] . " " . PHP_EOL;
+				}
+				//llamar a todos los clientes web
+				echo "***************************************************\n";
+				echo "\tNumero clientes web (int): " . $clientesWeb->count() . PHP_EOL;
+				echo "***************************************************\n";
+
+				foreach($clientesWeb as $fd => $datos){
+					$fd_web = (int) $datos['fd'];
+					if($server->isEstablished($fd_web)){
 						echo "**********estrellitas********" . PHP_EOL;
-						echo "fd web: " . $fd . PHP_EOL;
+						echo "fd web: " . $fd_web . PHP_EOL;
 						try{
-							$server->push($fd, json_encode($datos_recibidos));
-							mensajesLog('INFO', "Feedback emitido al cliente web", ['cliente_receptor' => $fd]);
+							$server->push($fd_web, json_encode($datos_recibidos));
+							mensajesLog('INFO', "Feedback emitido al cliente web", ['cliente_receptor' => $fd_web]);
 						}
 						catch(\Exception $e){
-							mensajesLog('Error', "Error al hacer el feedback al cliente web", ['error_feedback' => $fd]);
+							mensajesLog('ERROR', "Error al hacer el feedback al cliente web", ['error_feedback' => $fd_web]);
 						}
 					}
 				}
+
+
 				//enviar los datos a todos los clientes para actualizar sus ventanas
 			//	foreach($server->connections as $fd){
 			//		if($server->isEstablished($fd) && $fd != $frame->fd && !isset($fd_registrados[$fd])){
@@ -284,6 +326,7 @@ $server->on("message", function (Server $server, Frame $frame) use ($dispAutenti
 
 // Listen to the WebSocket connection close event.
 $server->on('Close', function ($server, $fd) use ($dispAutenticados, $clientesWeb){
+	mensajesLog('DESCONECTADO',	"Cliente desconectado", ['desconecatado' => $fd]);
 	if($clientesWeb->exists($fd)){
 		$clientesWeb->del($fd);
 		mensajesLog('ELIMINADO', "Cliente web eliminado de listas", ['eliminado' => $fd]);
@@ -292,12 +335,11 @@ $server->on('Close', function ($server, $fd) use ($dispAutenticados, $clientesWe
 		$dispAutenticados->del($fd);	
 		mensajesLog('ELIMINADO', "Controlador eliminado de listas", ['eliminado' => $fd]);
 	}
-	mensajesLog('DESCONECTADO',	"Cliente desconectado", ['desconecatado' => $fd]);
 });
 
 $server->set([
-	'worker_num' => 4,
-	'max_request' => 1024,
+	'worker_num' => 1,
+	'max_request' => 0, //infinitos requests
 	'heartbeat_check_interval' => 10,
 	'heartbeat_idle_time' => 20,
 ]);
