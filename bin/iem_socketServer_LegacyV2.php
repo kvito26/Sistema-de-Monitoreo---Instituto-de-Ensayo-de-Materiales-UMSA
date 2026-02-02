@@ -8,6 +8,7 @@ use Swoole\WebSocket\Frame;
 use Swoole\Table;
 use Swoole\Http\Request;
 use Swoole\Timer;
+use Swoole\Server\Task;
 use Iem\WebSocket\WSocketController;
 use Iem\OrmHelper;
 use Iem\Dispositivo\DispositivoRepository;
@@ -22,13 +23,13 @@ $dispAutenticados->column('hora_conexion_cont', Table::TYPE_INT);
 $dispAutenticados->create();
 
 //creando una tabla en memoria compartida para guardar los clientes web
-$clientesWeb = new Table(1024);
+$clientesWeb = new Table(2048);
 $clientesWeb->column('fd', Table::TYPE_INT);
 $clientesWeb->column('hora_conexion_web', Table::TYPE_INT);
 $clientesWeb->create();
 
 //creando los objetos servidor y controller del mismo. objeto del repositorio de los dispositivos
-$server = new Server("0.0.0.0", 8080);
+$server = new Server("0.0.0.0", 8080, SWOOLE_PROCESS);
 $controller = new WSocketController();
 
 //**************************************************************************************
@@ -67,6 +68,47 @@ function mensajesLog(string $nivel, string $mensaje, array $contexto = []): void
 	echo $logLine;
 }
 
+//function para la emision de feedbacks
+function emisionFeedbacks(Server $server, Table $clientesWeb, array $payload): void{
+	$feedPayload = json_encode($payload);
+	mensajesLog('INFO', "La cantidad de clientes web para la emision", ['cantidad_clientes_web' => $clientesWeb->count()]);
+
+	foreach($clientesWeb as $fd => $datos_cliente){
+		$fd_web = $datos_cliente['fd'];
+		//echo "intentando con el cliente: " . $fd_web . PHP_EOL;
+		try{
+		//	echo "dentro del try\n";
+		//	echo "si existe: " . var_dump($server->isEstablished($fd_web)) . PHP_EOL;
+			if ($server->isEstablished($fd_web)){
+				$server->push($fd_web, $feedPayload);
+				mensajesLog('EXITOSO', "Se ha enviado el feedback", ['cliente_web' => $fd_web]);
+			}
+		}
+		catch(\Exception $e){
+			mensajesLog('ERROR', "Error al emitir feedback al cliente web", ['error_feed_fd' => $fd_web]);
+		}
+	}
+}
+
+//funcion para la emision de datos TH a los clientes web
+function emisionDatosTH(Server $server, Table $clientesWeb, array $payload): void{
+	$thPayload =json_encode($payload);
+	mensajesLog('INFO', "La cantidad de clientes web para la emision de datos TH", ['cantidad_clientes_web' => $clientesWeb->count()]);
+
+	foreach($clientesWeb as $fd => $datos_cliente){
+		$fd_web = $datos_cliente['fd'];
+
+		try{
+			if ($server->isEstablished($fd_web)){
+				$server->push($fd_web, $thPayload);
+				mensajesLog('EXITOSO', "Se ha enviado los datos TH", ['cliente_web' => $fd_web]);
+			}
+		}
+		catch(\Exception $e){
+			mensajesLog('ERROR', "Error al emitir datos TH al cliente web", ['error_TH_fd' => $fd_web]);
+		}
+	}
+}
 
 //**************************************************************************************
 //evento start (solo una ejecucion)
@@ -112,14 +154,48 @@ $server->on("open", function(Server $server, Request $request) use ($clientesWeb
 	}
 });
 
-$server->on('workerError', function(Server $server, int $workerId, int $workerPid, int $exitCode, int $signal){
-    mensajesLog('CRITICO', "Worker crashed", [
-        'worker_id' => $workerId,
-        'pid' => $workerPid,
-        'exit_code' => $exitCode,
-        'signal' => $signal
-    ]);
+//evento tarea (task) gestionadado por task workers
+$server->on('task', function(Server $server, Task $task) use ($clientesWeb){
+	//saber que task worker esta realizando la tarea:
+	echo "\nTask worker: " . $server->worker_id . " esta procesando la tarea" . PHP_EOL;
+	
+	$datosTarea = $task->data;
+	$tipoTarea = $datosTarea['tipo'] ?? 'desconocido';
+
+//	echo "clientes web dentro de task: " . PHP_EOL;
+//	foreach($clientesWeb as $fd => $cliente){
+//		$fd_web = $cliente['fd'];
+//		echo "cliente web task: (fd)" . $fd_web . PHP_EOL;
+//	}
+//
+//	echo "\nclientes conectados totales: " . PHP_EOL;
+//	foreach($server->connections as $fd){
+//		echo "\t cliente en la conexion task (fd): " . $fd . PHP_EOL;
+//	}
+
+	switch ($tipoTarea){
+		case 'emision_feedbacks':
+			emisionFeedbacks($server, $clientesWeb, $datosTarea['payload']);
+			break;	
+		
+		case 'emision_datosTH':
+			emisionDatosTH($server, $clientesWeb, $datosTarea['payload']);
+			break;
+
+		default:
+			mensajesLog('ERROR', "Error en el tipo de tarea a ejecutar");
+			break;
+	}
 });
+
+//evento al finalizar la tarea
+$server->on('finish', function(Server $server, $task_id, $result){
+	mensajesLog('EXITOSO', "La tarea se ha completado con exito", ['exito_tarea' => $task_id]);	
+	print_r($result);
+});
+
+
+
 
 //evento message (logica de funcionamiento del servidor), recibir datos json
 $server->on("message", function (Server $server, Frame $frame) use ($dispAutenticados, $clientesWeb, $controller){
@@ -173,13 +249,21 @@ $server->on("message", function (Server $server, Frame $frame) use ($dispAutenti
 				$controller->registroTH($datos_recibidos);
 
 				//enviando los datos recogidos en la web, para que lo recoja js
-				$payloadWeb = json_encode([
+			//	$payloadWeb = json_encode([
+			//		'action' => 'datos_actualizados',
+			//		'id_disp' => $datos_recibidos['id_disp'],
+			//		'temp' => $datos_recibidos['temp'],
+			//		'hum' => $datos_recibidos['hum'],
+			//		'fecha' => date('d/m H:i:s'),
+			//	]);
+
+				$payloadWeb = [
 					'action' => 'datos_actualizados',
 					'id_disp' => $datos_recibidos['id_disp'],
 					'temp' => $datos_recibidos['temp'],
 					'hum' => $datos_recibidos['hum'],
 					'fecha' => date('d/m H:i:s'),
-				]);
+				];
 
 				mensajesLog("DATOS", "Datos registrados y emitidos", [
 					'ambiente' => $datos_recibidos['id_disp'],
@@ -199,25 +283,24 @@ $server->on("message", function (Server $server, Frame $frame) use ($dispAutenti
 				echo "\tNumero clientes web (int): " . $clientesWeb->count() . PHP_EOL;
 				echo "***************************************************\n";
 
-				foreach($clientesWeb as $fd => $datos){
-					$fd_web = (int) $datos['fd'];
-					if($server->isEstablished($fd_web)){
-						echo "**********estrellitas********" . PHP_EOL;
-						echo "fd web: " . $fd_web . PHP_EOL;
-						try{
-							$server->push($fd_web, $payloadWeb);
-							mensajesLog('INFO', "Datos TH emitido al cliente web", ['cliente_receptor' => $fd_web]);
-						}
-						catch(\Exception $e){
-							mensajesLog('ERROR', "Error al hacer el feedback TH al cliente web", ['error_feedback' => $fd_web]);
-						}
-					}
-				}
-				
-			//	foreach ($server->connections as $fd){
-			//		if ($server->isEstablished($fd) && $fd != $frame->fd && !isset($fd_registrados[$fd])){
-			//			$server->push($fd, $payloadWeb);
-			//			mensajesLog('INFO', "Dispositivos evitatos", ['evitados' => implode(", ", $fd_registrados)]);
+				$server->task([
+					'tipo' => 'emision_datosTH',
+					'payload' => $payloadWeb,
+				]);
+
+			//	//emison de datos a todos los clientes web (solo funciona con un solo worker)
+			//	foreach($clientesWeb as $fd => $datos){
+			//		$fd_web = (int) $datos['fd'];
+			//		if($server->isEstablished($fd_web)){
+			//			echo "**********estrellitas********" . PHP_EOL;
+			//			echo "fd web: " . $fd_web . PHP_EOL;
+			//			try{
+			//				$server->push($fd_web, $payloadWeb);
+			//				mensajesLog('INFO', "Datos TH emitido al cliente web", ['cliente_receptor' => $fd_web]);
+			//			}
+			//			catch(\Exception $e){
+			//				mensajesLog('ERROR', "Error al hacer el feedback TH al cliente web", ['error_feedback' => $fd_web]);
+			//			}
 			//		}
 			//	}
 			}
@@ -272,35 +355,35 @@ $server->on("message", function (Server $server, Frame $frame) use ($dispAutenti
 				//imprimiendo todos los clitentes web
 				echo "\tClientes web listado: " . PHP_EOL;
 				foreach($clientesWeb as $fd_web => $datos){
-					echo "\t\tCliente web:" . $datos['fd'] . " " . PHP_EOL;
+					echo "\t\tCliente web (fd): " . $datos['fd'] . " " . PHP_EOL;
 				}
 				//llamar a todos los clientes web
 				echo "***************************************************\n";
 				echo "\tNumero clientes web (int): " . $clientesWeb->count() . PHP_EOL;
 				echo "***************************************************\n";
 
-				foreach($clientesWeb as $fd => $datos){
-					$fd_web = (int) $datos['fd'];
-					if($server->isEstablished($fd_web)){
-						echo "**********estrellitas********" . PHP_EOL;
-						echo "fd web: " . $fd_web . PHP_EOL;
-						try{
-							$server->push($fd_web, json_encode($datos_recibidos));
-							mensajesLog('INFO', "Feedback emitido al cliente web", ['cliente_receptor' => $fd_web]);
-						}
-						catch(\Exception $e){
-							mensajesLog('ERROR', "Error al hacer el feedback al cliente web", ['error_feedback' => $fd_web]);
-						}
-					}
-				}
+				$server->task([
+					'tipo' => 'emision_feedbacks',
+					'payload' => $datos_recibidos,
+				]);
 
 
-				//enviar los datos a todos los clientes para actualizar sus ventanas
-			//	foreach($server->connections as $fd){
-			//		if($server->isEstablished($fd) && $fd != $frame->fd && !isset($fd_registrados[$fd])){
-			//			$server->push($fd, json_encode($datos_recibidos));
+			//	//emision de feedback a todos los clientes web (solo funciona con un solo worker)
+			//	foreach($clientesWeb as $fd => $datos){
+			//		$fd_web = (int) $datos['fd'];
+			//		if($server->isEstablished($fd_web)){
+			//			echo "**********estrellitas********" . PHP_EOL;
+			//			echo "fd web: " . $fd_web . PHP_EOL;
+			//			try{
+			//				$server->push($fd_web, json_encode($datos_recibidos));
+			//				mensajesLog('INFO', "Feedback emitido al cliente web", ['cliente_receptor' => $fd_web]);
+			//			}
+			//			catch(\Exception $e){
+			//				mensajesLog('ERROR', "Error al hacer el feedback al cliente web", ['error_feedback' => $fd_web]);
+			//			}
 			//		}
 			//	}
+
 				mensajesLog('FEEDBACK', "Feedback hecho desde un dispositivo registrado", ['feedback' => $datos_recibidos]);
 			}
 			catch(\Exception $e){
@@ -324,6 +407,16 @@ $server->on("message", function (Server $server, Frame $frame) use ($dispAutenti
 
 });
 
+//codigo temporal para verificar algun error con algun worker
+$server->on('workerError', function(Server $server, int $workerId, int $workerPid, int $exitCode, int $signal){
+    mensajesLog('CRITICO', "Worker crashed", [
+        'worker_id' => $workerId,
+        'pid' => $workerPid,
+        'exit_code' => $exitCode,
+        'signal' => $signal
+    ]);
+});
+
 // Listen to the WebSocket connection close event.
 $server->on('Close', function ($server, $fd) use ($dispAutenticados, $clientesWeb){
 	mensajesLog('DESCONECTADO',	"Cliente desconectado", ['desconecatado' => $fd]);
@@ -339,6 +432,8 @@ $server->on('Close', function ($server, $fd) use ($dispAutenticados, $clientesWe
 
 $server->set([
 	'worker_num' => 1,
+	'task_worker_num' => 2, //workers para realizar tareas pesadas como la emision de datos
+	'task_enable_coroutine' => true, //activando la corutinas
 	'max_request' => 0, //infinitos requests
 	'heartbeat_check_interval' => 10,
 	'heartbeat_idle_time' => 20,
