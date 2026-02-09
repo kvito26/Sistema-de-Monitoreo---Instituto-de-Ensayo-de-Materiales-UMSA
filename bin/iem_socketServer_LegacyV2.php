@@ -105,11 +105,46 @@ function emisionDatosTH(Server $server, Table $clientesWeb, array $payload): voi
 			}
 		}
 		catch(\Exception $e){
-			mensajesLog('ERROR', "Error al emitir datos TH al cliente web", ['error_TH_fd' => $fd_web]);
+			mensajesLog('ERROR', "Error al emitir datos TH al cliente web", ['error_TH_fd' => $e->getMessage()]);
 		}
 	}
 }
 
+//funcion para el envio de comandos hacia los dispositivos 
+function envioComando(Server $server, Table $dispAutenticados, array $payload, int $fd_disp): void{
+	$comandoPayload = json_encode($payload);
+	mensajesLog('INFO', "La cantidad de clientes autenticados", ['cantidad_autenticados' => $dispAutenticados->count()]);
+	
+	try{
+		if ($server->isEstablished($fd_disp)){
+			$server->push($fd_disp, $comandoPayload);
+			mensajesLog('EXITOSO', "Se ha enviado el comando al controlador", ['fd_disp' => $fd_disp]);
+		}	
+	}	
+	catch(\Exception $e){
+		mensajesLog('ERROR', "Error al enviar el comando al controlador", ['error_comando' => $e->getMessage()]); 
+	}
+}
+
+//funcion para la emision de desconexion de un controlador a los clientes web
+function emisionDesconexion(Server $server, Table $clientesWeb, array $payload): void{
+	$payloadDesconex = json_encode($payload);
+	mensajesLog('INFO', "La cantidad de clientes web para la emision de desconexion", ['cantidad_clientes_web' => $clientesWeb->count()]);
+
+	foreach($clientesWeb as $fd => $datos_cliente){
+		$fd_web = $datos_cliente['fd'];
+
+		try{
+			if ($server->isEstablished($fd_web)){
+				$server->push($fd_web, $payloadDesconex);
+				mensajesLog('EXITOSO', "Se ha enviado el estado de desconexion", ['cliente_web' => $fd_web]);
+			}
+		}
+		catch(\Exception $e){
+			mensajesLog('ERROR', "Error al emitir el estado de desconexion", ['error' => $e->getMessage()]);
+		}
+	}
+}
 //**************************************************************************************
 //evento start (solo una ejecucion)
 $server->on("start", function(Server $server){
@@ -155,7 +190,7 @@ $server->on("open", function(Server $server, Request $request) use ($clientesWeb
 });
 
 //evento tarea (task) gestionadado por task workers
-$server->on('task', function(Server $server, Task $task) use ($clientesWeb){
+$server->on('task', function(Server $server, Task $task) use ($clientesWeb, $dispAutenticados){
 	//saber que task worker esta realizando la tarea:
 	echo "\nTask worker: " . $server->worker_id . " esta procesando la tarea" . PHP_EOL;
 	
@@ -180,6 +215,14 @@ $server->on('task', function(Server $server, Task $task) use ($clientesWeb){
 		
 		case 'emision_datosTH':
 			emisionDatosTH($server, $clientesWeb, $datosTarea['payload']);
+			break;
+
+		case 'emision_desconex':
+			emisionDesconexion($server, $clientesWeb, $datosTarea['payload']);
+			break;
+
+		case 'envio_comando':
+			envioComando($server, $dispAutenticados, $datosTarea['payload'], $datosTarea['fd']);
 			break;
 
 		default:
@@ -265,19 +308,13 @@ $server->on("message", function (Server $server, Frame $frame) use ($dispAutenti
 					'fecha' => date('d/m H:i:s'),
 				];
 
-				mensajesLog("DATOS", "Datos registrados y emitidos", [
-					'ambiente' => $datos_recibidos['id_disp'],
-					'temp' => $datos_recibidos['temp'],
-					'hum' => $datos_recibidos['hum'],
-					'timestamp' => date('d/m H:i:s'),
-				]);
-
 				//reenviando a todos los clientes web
 				//imprimiendo todos los clitentes web
 				echo "\tClientes web listado: " . PHP_EOL;
 				foreach($clientesWeb as $fd_web => $datos){
 					echo "\t\tCliente web:" .  $datos['fd'] . " " . PHP_EOL;
 				}
+
 				//llamar a todos los clientes web
 				echo "***************************************************\n";
 				echo "\tNumero clientes web (int): " . $clientesWeb->count() . PHP_EOL;
@@ -286,6 +323,13 @@ $server->on("message", function (Server $server, Frame $frame) use ($dispAutenti
 				$server->task([
 					'tipo' => 'emision_datosTH',
 					'payload' => $payloadWeb,
+				]);
+
+				mensajesLog("DATOS", "Datos registrados y emitidos", [
+					'ambiente' => $datos_recibidos['id_disp'],
+					'temp' => $datos_recibidos['temp'],
+					'hum' => $datos_recibidos['hum'],
+					'timestamp' => date('d/m H:i:s'),
 				]);
 
 			//	//emison de datos a todos los clientes web (solo funciona con un solo worker)
@@ -317,33 +361,142 @@ $server->on("message", function (Server $server, Frame $frame) use ($dispAutenti
 
 			$disp_objetivo = $dispAutenticados->get($datos_recibidos['id_objetivo']);
 
-			try{
-				//verificando la existencia del dispositivo objetivo
-				if ($disp_objetivo && $server->isEstablished($disp_objetivo['fd'])){
-					mensajesLog('INFO', "El dispositivo esta autenticado", [
-						'dispositivo' => $datos_recibidos['id_objetivo'],
-						'tipo_comando' => $datos_recibidos['tipo'],
-					]);
-					
-					//enviando la orden al dispositivo
-					$mensaje = json_encode([
-						'tipo' => $datos_recibidos["tipo"],
-						'valor' => $datos_recibidos["valor"],
-					]);
+			$tipo_comando = $datos_recibidos['tipo'];
 
-					$server->push($disp_objetivo['fd'], $mensaje);
-					mensajesLog('COMANDO', "Se ha enviado el comando", [
-						'dispositivo' => $datos_recibidos['id_objetivo'],
-						'tipo_comando' => $datos_recibidos['tipo'],
-						'valor' => $datos_recibidos["valor"],
-					]);
-				}
-			}
-			catch(\Exception $e){
-				mensajesLog('ERROR', "No se ha podido enviar el comando", ['error_comando' => [
-					'dispositivo' => $datos_recibidos['id_objetivo'],
-					'tipo_comando' => $datos_recibidos['tipo'],
-				]]);
+			switch ($tipo_comando){
+				case 'ordenVent': case 'ordenCalent': case 'ordenHumi': 
+					try{
+						$comando_task = [
+							'tipo' => $datos_recibidos['tipo'],
+							'valor' => $datos_recibidos['valor'],
+						];
+
+						$server->task([
+							'tipo' => 'envio_comando',
+							'fd' => $disp_objetivo['fd'],
+							'payload' => $comando_task,
+						]);
+
+						//verificando la existencia del dispositivo objetivo (realizando con un solo worker, tambien funciona por el momento con varios task workers)
+					//	if ($disp_objetivo && $server->isEstablished($disp_objetivo['fd'])){
+					//		mensajesLog('INFO', "El dispositivo esta autenticado", [
+					//			'dispositivo' => $datos_recibidos['id_objetivo'],
+					//			'tipo_comando' => $datos_recibidos['tipo'],
+					//		]);
+					//		
+					//		//enviando la orden al dispositivo
+					//		$mensaje = json_encode([
+					//			'tipo' => $datos_recibidos["tipo"],
+					//			'valor' => $datos_recibidos["valor"],
+					//		]);
+
+					//		$server->push($disp_objetivo['fd'], $mensaje);
+					//		mensajesLog('COMANDO', "Se ha enviado el comando", [
+					//			'dispositivo' => $datos_recibidos['id_objetivo'],
+					//			'tipo_comando' => $datos_recibidos['tipo'],
+					//			'valor' => $datos_recibidos["valor"],
+					//		]);
+					//	}
+
+						mensajesLog('COMANDO', "Se ha enviado el comando", [
+							'dispositivo' => $datos_recibidos['id_objetivo'],
+							'tipo_comando' => $datos_recibidos['tipo'],
+							'valor' => $datos_recibidos["valor"],
+						]);
+					}
+					catch(\Exception $e){
+						mensajesLog('ERROR', "No se ha podido enviar el comando", ['error_comando' => [
+							'dispositivo' => $datos_recibidos['id_objetivo'],
+							'tipo_comando' => $datos_recibidos['tipo'],
+						]]);
+					}
+					break;
+
+				case 'ordenVent_Var':
+					$valor_pwm = (int) (255 * $datos_recibidos['valor'] / 100);
+					try{
+						$comando_task = [
+							'tipo' => $datos_recibidos['tipo'],
+							'valor' => $valor_pwm,
+						];
+
+						$server->task([
+							'tipo' => 'envio_comando',
+							'fd' => $disp_objetivo['fd'],
+							'payload' => $comando_task,
+						]);
+
+						mensajesLog('COMANDO', "Se ha enviado el comando", [
+							'dispositivo' => $datos_recibidos['id_objetivo'],
+							'tipo_comando' => $datos_recibidos['tipo'],
+							'valor_pwm' => $valor_pwm,
+						]);
+					}
+					catch(\Exception $e){
+						mensajesLog('ERROR', "No se ha podido enviar el comando", ['error_comando' => [
+							'dispositivo' => $datos_recibidos['id_objetivo'],
+							'tipo_comando' => $datos_recibidos['tipo'],
+						]]);
+					}
+					break;
+
+				case 'automatico':
+					try{
+						$comando_task = [
+							'tipo' => $datos_recibidos['tipo'],
+							'temp' => $datos_recibidos['temp'],
+							'hum' => $datos_recibidos['hum'],
+						];
+
+						$server->task([
+							'tipo' => 'envio_comando',
+							'fd' => $disp_objetivo['fd'],
+							'payload' => $comando_task,
+						]);
+						
+						mensajesLog('COMANDO', "Se ha recibido la orden para el sistema automatico", [
+							'dispositivo' => $datos_recibidos['id_objetivo'],
+							'tipo_comando' => $datos_recibidos['tipo'],
+							'temp' => $datos_recibidos['temp'],
+							'hum' => $datos_recibidos['hum'],
+						]);	
+					}
+					catch(\Exception $e){
+						mensajesLog('ERROR', "No se ha podido enviar el comando", ['error_comando' => [
+							'dispositivo' => $datos_recibidos['id_objetivo'],
+							'tipo_comando' => $datos_recibidos['tipo'],
+						]]);
+					}
+					break;
+
+				case 'detener_todo':
+					try{
+						$comando_task = [
+							'tipo' => $datos_recibidos['tipo'],
+						];
+
+						$server->task([
+							'tipo' => 'envio_comando',
+							'fd' => $disp_objetivo['fd'],
+							'payload' => $comando_task,
+						]);
+						
+						mensajesLog('COMANDO', "Se ha recibido la orden para el sistema automatico", [
+							'dispositivo' => $datos_recibidos['id_objetivo'],
+							'tipo_comando' => $datos_recibidos['tipo'],
+						]);	
+					}
+					catch(\Exception $e){
+						mensajesLog('ERROR', "No se ha podido enviar el comando", ['error_comando' => [
+							'dispositivo' => $datos_recibidos['id_objetivo'],
+							'tipo_comando' => $datos_recibidos['tipo'],
+						]]);
+					}
+					break;
+
+				default:
+					mensajesLog('ADVERTENCIA', "Tipo de comando desconocido", ['tipo_comando_desconocido (fd_emisor)' => $frame->fd]);
+					break;
 			}
 			break;
 
@@ -420,13 +573,40 @@ $server->on('workerError', function(Server $server, int $workerId, int $workerPi
 // Listen to the WebSocket connection close event.
 $server->on('Close', function ($server, $fd) use ($dispAutenticados, $clientesWeb){
 	mensajesLog('DESCONECTADO',	"Cliente desconectado", ['desconecatado' => $fd]);
+
+	foreach($dispAutenticados as $id_disp => $datos){
+		$fd_auth = $datos['fd'];
+		if ($fd_auth == $fd){
+			$dispAutenticados->del($id_disp);	
+			mensajesLog('ELIMINADO', "Controlador eliminado de listas", ['eliminado' => $fd]);
+
+			//envio de mensaje a los clientes web, que el controlador se ha desconectado del servidor
+			try{
+				$payloadDesconex = [
+					'action' => 'control_desconex',
+					'id_disp' => (string) $id_disp,
+				];
+
+				$server->task([
+					'tipo' => 'emision_desconex',
+					'payload' => $payloadDesconex,
+				]);
+
+				mensajesLog("INFO", "Estado de controlador desconectado enviado a los clientes", [
+					'id_disp' => (string) $id_disp,
+					'timestamp' => date('d/m H:i:s'),
+				]);
+
+			}
+			catch(\Exception $e){
+				mensajesLog("ERROR", "Error al enviar el estado de desconexion", ['error' => $e->getMessage()]);	
+			}
+		}
+	}
+
 	if($clientesWeb->exists($fd)){
 		$clientesWeb->del($fd);
 		mensajesLog('ELIMINADO', "Cliente web eliminado de listas", ['eliminado' => $fd]);
-	}
-	if($dispAutenticados->exists($fd)){
-		$dispAutenticados->del($fd);	
-		mensajesLog('ELIMINADO', "Controlador eliminado de listas", ['eliminado' => $fd]);
 	}
 });
 

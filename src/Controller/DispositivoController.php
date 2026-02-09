@@ -18,35 +18,35 @@ class DispositivoController extends Controller{
 	}	
 
 	public function pagRegistrarDisp(): void{
-		if (UsuarioController::isLoggedIn()){
+//		if (UsuarioController::isLoggedIn()){
 			$template = 'dispositivos/registro_dispositivo.html.twig';
 			$args = [];
 
 			print $this->twig->render($template, $args);
-		}
-		else {
-			$this->defaultController->pagLogin();
-		}
+//		}
+//		else {
+//			$this->defaultController->pagLogin();
+//		}
 	}
 
 	public function pagGestionDispositivos(): void{
 		$dispositivos = $this->dispositivoRepository->findAll();
 
-		if (UsuarioController::isLoggedIn()){
+//		if (UsuarioController::isLoggedIn()){
 			$template = 'dispositivos/gestion_dispositivos.html.twig';
 			$args = [
 				'dispositivos' => $dispositivos,
 			];
 
 			print $this->twig->render($template, $args);
-		}
-		else {
-			$this->defaultController->pagLogin();
-		}
+//		}
+//		else {
+//			$this->defaultController->pagLogin();
+//		}
 	}
 
 	public function procesoRegistrarDisp(string $identificador, string $nombre_disp): void{
-		if (UsuarioController::isLoggedIn()){
+//		if (UsuarioController::isLoggedIn()){
 			//obtenieno la fecha de registro
 			$fecha = new DateTimeImmutable('now', new \DateTimeZone('America/La_Paz'));
 			$estado = false;
@@ -61,10 +61,10 @@ class DispositivoController extends Controller{
 			$nuevoDisp = $this->dispositivoRepository->insert($dispositivo);
 
 			print var_dump($nuevoDisp);
-		}
-		else {
-			$this->defaultController->pagLogin();
-		}
+//		}
+//		else {
+//			$this->defaultController->pagLogin();
+//		}
 	}
 }
 

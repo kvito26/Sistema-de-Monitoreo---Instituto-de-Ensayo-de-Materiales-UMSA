@@ -13,9 +13,9 @@ abstract class Controller{
 	public function __construct(){
 		$loader = new FilesystemLoader(self::PATH_TO_TEMPLATE);
 		$this->twig = new Environment($loader);
-		$this->twig->addFunction(
-			new TwigFunction('isLoggedIn', [UsuarioController::class, 'isLoggedIn'])
-		);
+//		$this->twig->addFunction(
+//			new TwigFunction('isLoggedIn', [UsuarioController::class, 'isLoggedIn'])
+//		);
 
 	}
 }

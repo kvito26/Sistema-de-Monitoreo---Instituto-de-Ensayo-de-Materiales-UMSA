@@ -7,6 +7,66 @@
 <div class="container mt-5">
 	<h2 class="text-center">Reportes - Ambiente 2</h2>
 
+	<h5 class="card-title text-center">CONTROL AUTOMÁTICO</h5>
+				<form action="">
+					<div class="row">
+						<div class="col-3 text-center">
+							<br>
+							<label class="form-label" for="valor_temp1">Temperatura</label>
+							<input name="valor_temp1" id="valor_temp1" class="form-control" min="10" max="50" step="1" type="number" value="10">
+						</div>
+						<div class="col-9 text-center">
+							<br>
+							<label for="valor_temp1_range" class="form-label">Temperatura</label>
+							<input type="range" class="form-range" min="0" max="100" value="10" id="valor_temp1_range">
+							<small><output for="valor_temp1_range" id="valor_temp1_range_out" aria-hidden="true">0</output> [%] </small>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-3 text-center">
+							<br>
+							<label class="form-label" for="valor_hum1">Humedad</label>
+							<input name="valor_hum1" id="valor_hum1" class="form-control" min="10" max="100" step="1" type="number" value="10">
+						</div>
+						<div class="col-9 text-center">
+							<br>
+							<label for="valor_hum1_range" class="form-label">Humedad</label>
+							<input type="range" class="form-range" min="0" max="100" value="10" id="valor_hum1_range">
+							<small><output for="valor_hum1_range" id="valor_hum1_range_out" aria-hidden="true">0</output> [%] </small>
+						</div>
+					</div>
+					<div class="text-center mt-5">
+						<button class="btn btn-success btn-lg me-1">Iniciar</button>
+						<button class="btn btn-danger btn-lg">Parar</button>
+					</div>
+				</form>
+
+	<script>
+    // Función para sincronizar valores
+    function sincronizarValores(inputId, rangeId, outputId) {
+        const input = document.getElementById(inputId);
+        const range = document.getElementById(rangeId);
+        const output = document.getElementById(outputId);
+
+        // Cuando cambia el input numérico, actualiza el range y el output
+        input.addEventListener('input', function() {
+            range.value = this.value;
+            output.textContent = this.value;
+        });
+
+        // Cuando cambia el range, actualiza el input y el output
+        range.addEventListener('input', function() {
+            input.value = this.value;
+            output.textContent = this.value;
+        });
+    }
+
+    // Sincronizar temperatura
+    sincronizarValores('valor_temp1', 'valor_temp1_range', 'valor_temp1_range_out');
+
+    // Sincronizar humedad
+    sincronizarValores('valor_hum1', 'valor_hum1_range', 'valor_hum1_range_out');
+</script>
 
 </div>
 {% endblock %}

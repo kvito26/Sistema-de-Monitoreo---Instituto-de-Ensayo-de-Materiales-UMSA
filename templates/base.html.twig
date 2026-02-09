@@ -4,6 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>{% block title %}{% endblock %}</title>
+	<link rel="icon" type="image/x-icon" href="/umsa-iem/public/images/logo_iem.png">
 	<!-- Agregando el soporte para el framework de css Bootstrap -->
 	<link rel="stylesheet" href="/umsa-iem/public/css/bootstrap-5.3.8-dist/css/bootstrap.min.css">
 	<link rel="stylesheet" href="/umsa-iem/public/css/bootstrap-icons-1.13.1/bootstrap-icons.css">
@@ -17,16 +18,29 @@
 </head>
 <body>
 	<!-- El nav bar de la pagina web -->
-	<nav class="navbar navbar-expand-md bg-success fixed-top shadow-sm">
+	<nav class="navbar navbar-expand-md fixed-top shadow-sm" style="background-color: #005b92;">
 		<div class="container-fluid">
-			<a class="navbar-brand text-white" href="/umsa-iem/public/?action=ambientes"><b>IEM-UMSA</b></a>
-			{% if isLoggedIn() %}
+			<!-- 			<a class="navbar-brand text-white" href="/umsa-iem/public/?action=ambientes"><b>IEM-UMSA</b></a>  -->
+			<a class="navbar-brand" href="/umsa-iem/public/?action=ambientes">
+			<img src="/umsa-iem/public/images/logo_iem.png" alt="logo-iem" style="width: 60px; height: auto;">
+			</a>
+			{#	{% if isLoggedIn() %} #}
 			 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
 				 <span class="navbar-toggler-icon"></span>
 			</button>
 
 			<div class="collapse navbar-collapse mx-auto" id="navbarNavAltMarkup">
 				<ul class="navbar-nav mx-auto text-center">
+					<li class="nav-item">
+						<a class="nav-link opacity-100 {% block ambiente1 %}{% endblock %}" href="/umsa-iem/public/?action=ambiente1">AMBIENTE 1</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link opacity-100 {% block ambiente2 %}{% endblock %}" href="/umsa-iem/public/?action=ambiente2">AMBIENTE 2</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link opacity-100 {% block ambiente3 %}{% endblock %}" href="/umsa-iem/public/?action=ambiente3">AMBIENTE 3</a>
+					</li>
+					<!-- 
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle opacity-100 {% block ambientesLink %}{% endblock %}" href="#" data-bs-toggle="dropdown" aria-expanded="false">Ambientes</a>
 							<ul class="dropdown-menu">
@@ -37,6 +51,7 @@
 								<li><a class="dropdown-item" href="/umsa-iem/public/?action=ambientes">Ambientes</a></li>
 							</ul>
 					</li>
+					-->
 
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle opacity-100 {% block reportesLink %}{% endblock %}" href="#" data-bs-toggle="dropdown" aria-expanded="false">Reportes</a>
@@ -47,6 +62,7 @@
 							</ul>
 					</li>
 
+					<!-- 
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle opacity-100 {% block usuariosLink %}{% endblock %}" href="#" data-bs-toggle="dropdown" aria-expanded="false">Usuarios</a>
 							<ul class="dropdown-menu">
@@ -55,7 +71,9 @@
 								<li><a class="dropdown-item {% block registrarLink %}{% endblock %}" href="/umsa-iem/public/?action=registrar">Registrar Usuario</a></li>
 							</ul>
 					</li>
+					-->
 
+					<!-- 
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle opacity-100 {% block dispositivosLink %}{% endblock %}" href="#" data-bs-toggle="dropdown" aria-expanded="false">Dispositivos</a>
 							<ul class="dropdown-menu">
@@ -64,26 +82,32 @@
 								<li><a class="dropdown-item" href="/umsa-iem/public/?action=registro_dispositivo">Agregar Dispositivo</a></li>
 							</ul>
 					</li>
+					-->
 					<li class="nav-item">
-						<a class="nav-link opacity-100" href="/umsa-iem/public/?action=acerca_de">Acerca de</a>
+						<a class="nav-link opacity-100 {% block acerca_de %}{% endblock %}" href="/umsa-iem/public/?action=acerca_de">Acerca de</a>
 					</li>
 				</ul>
-				{% endif %}
+				{# {% endif %} #}
+
 				
 				<div class="d-flex flex-column flex-md-row gap-2 align-items-center my-auto py-md-0 py-0" style="height: 45px">
 					<div class="p-2">
+						<!-- <div class="d-flex align-items-center form-switch" style="height: 55px;"> -->
 						<div class="d-flex align-items-center form-switch" style="height: 55px;">
 							<i class="bi bi-brightness-high-fill me-5"></i>
 							<input class="form-check-input me-1" type="checkbox" id="darkModeSwitch" checked>
 							<i class="bi bi-moon-stars-fill"></i>
 						</div>
 					</div>
-					{% if isLoggedIn() %}
+					{# {% if isLoggedIn() %} #}
+
+					<!-- 
 					<div class="vr my-auto" style="height: 35px;"></div>
 					<div class="p-2">
 						<a class="btn btn-outline-warning" href="/umsa-iem/public/?action=logout">Salir</a>
 					</div>
-					{% endif %}
+					-->
+					{# {% endif %} #}
 				</div>
 			</div>
 

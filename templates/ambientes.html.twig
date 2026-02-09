@@ -9,24 +9,24 @@
 
 			<div class="col-md-4 mb-3 mb-md-1">
 				<div class="card shadow">
-					<h5 class="card-header text-center text-white text-bg-danger" id="monitor1">Ambiente 1</h5>
+					<h5 class="card-header text-center text-white text-bg-danger" id="monitor1">AMBIENTE 1</h5>
 					<div class="card-body">
-						<table class="table table-borderless">
+						<table class="table table-borderless" style="vertical-align: middle;">
 							<tr>
 								<td class="text-end">
-									<span class="fs-1"><b>Temp: </b></span>
+									<span class="fs-2">Temp: </span>
 								</td>
 								<td>
-									<span class="fs-1" id="temp1">--.-</span>
+									<span class="fs-1" id="temp1"><b>--.-</b></span>
 									<small class="fs-2"> °C</small>
 								</td>
 							</tr>
 							<tr>
 								<td class="text-end">
-									<span class="fs-1"><b>Hum: </b></span>
+									<span class="fs-2">Hum: </span>
 								</td>
 								<td>
-									<span class="fs-1" id="hum1">--.-</span>
+									<span class="fs-1" id="hum1"><b>--.-</b></span>
 									<small class="fs-2"> %</small>
 								</td>
 							</tr>
@@ -40,25 +40,25 @@
 						 <table class="table table-borderless">
 							<tr>
 								<td class="text-end"><span>Ventilador: </span></td>
-								<td><span id="estadoVent1" class="badge bg-orange">Sin Datos</span>
+								<td><span id="estadoVent1" class="badge bg-orange">SIN DATOS</span>
 							</tr>
 							<tr>
 								<td class="text-end"><span>Calentador: </span></td>
-								<td><span id="estadoCalent1" class="badge bg-orange">Sin Datos</span>
+								<td><span id="estadoCalent1" class="badge bg-orange">SIN DATOS</span>
 							</tr>
 							<tr>
 								<td class="text-end">Nivel de Agua: </td>
-								<td><span id="estadoNivel1" class="badge bg-orange">Sin Datos</span></td>
+								<td><span id="estadoNivel1" class="badge bg-orange">SIN DATOS</span></td>
 							</tr>
 							<tr>
 								<td class="text-end">Humidificador: </td>
-								<td><span id="estadoHumi1" class="badge bg-orange">Sin Datos</span></td>
+								<td><span id="estadoHumi1" class="badge bg-orange">SIN DATOS</span></td>
 							</tr>
 						</table>
 
 						<div class="text-center">
 							<a class="btn btn-primary {% block ambiente1Link %}{% endblock %}" href="/umsa-iem/public/?action=ambiente1" role="button">Detalles</a>
-							<a class="btn btn-danger" href="#" role="button">Parar</a>
+							<a class="btn btn-danger px-5" href="#" role="button">Parar</a>
 						</div>
 
 					</div>
@@ -67,25 +67,25 @@
 
 			<div class="col-md-4 mb-3 mb-md-1">
 				<div class="card shadow">
-					<h5 class="card-header text-center text-bg-danger" id="monitor2">Ambiente 2</h5>
+					<h5 class="card-header text-center text-bg-danger" id="monitor2">AMBIENTE 2</h5>
 					<div class="card-body">
 
-						<table class="table table-borderless">
+						<table class="table table-borderless" style="vertical-align: middle;">
 							<tr>
 								<td class="text-end">
-									<span class="fs-1"><b>Temp: </b></span>
+									<span class="fs-2">Temp: </span>
 								</td>
 								<td>
-									<span class="fs-1" id="temp2">--.-</span>
+									<span class="fs-1" id="temp2"><b>--.-</b></span>
 									<small class="fs-2"> °C</small>
 								</td>
 							</tr>
 							<tr>
 								<td class="text-end">
-									<span class="fs-1"><b>Hum: </b></span>
+									<span class="fs-2">Hum: </span>
 								</td>
 								<td>
-									<span class="fs-1" id="hum2">--.-</span>
+									<span class="fs-1" id="hum2"><b>--.-</b></span>
 									<small class="fs-2"> %</small>
 								</td>
 							</tr>
@@ -99,25 +99,25 @@
 						 <table class="table table-borderless">
 							<tr>
 								<td class="text-end"><span>Ventilador: </span></td>
-								<td><span id="estadoVent2" class="badge bg-orange">Sin Datos</span>
+								<td><span id="estadoVent2" class="badge bg-orange">SIN DATOS</span>
 							</tr>
 							<tr>
 								<td class="text-end"><span>Calentador: </span></td>
-								<td><span id="estadoCalent2" class="badge bg-orange">Sin Datos</span>
+								<td><span id="estadoCalent2" class="badge bg-orange">SIN DATOS</span>
 							</tr>
 							<tr>
 								<td class="text-end">Nivel de Agua: </td>
-								<td><span id="estadoNivel2" class="badge bg-orange">Sin Datos</span></td>
+								<td><span id="estadoNivel2" class="badge bg-orange">SIN DATOS</span></td>
 							</tr>
 							<tr>
 								<td class="text-end">Humidificador: </td>
-								<td><span id="estadoHumi2" class="badge bg-orange">Sin Datos</span></td>
+								<td><span id="estadoHumi2" class="badge bg-orange">SIN DATOS</span></td>
 							</tr>
 						</table>
 
 						<div class="text-center">
 							<a class="btn btn-primary {% block ambiente2Link %}{% endblock %}" href="/umsa-iem/public/?action=ambiente2" role="button">Detalles</a>
-							<a class="btn btn-danger" href="#" role="button">Parar</a>
+							<a class="btn btn-danger px-5" href="#" role="button">Parar</a>
 						</div>
 					</div>
 				</div>
@@ -125,25 +125,25 @@
 
 			<div class="col-md-4 mb-3 mb-md-1">
 				<div class="card shadow">
-					<h5 class="card-header text-center text-bg-danger" id="monitor3">Ambiente 3</h5>
+					<h5 class="card-header text-center text-bg-danger" id="monitor3">AMBIENTE 3</h5>
 					<div class="card-body">
 
-						<table class="table table-borderless">
+						<table class="table table-borderless" style="vertical-align: middle;">
 							<tr>
 								<td class="text-end">
-									<span class="fs-1"><b>Temp: </b></span>
+									<span class="fs-2">Temp: </span>
 								</td>
 								<td>
-									<span class="fs-1" id="temp3">--.-</span>
+									<span class="fs-1" id="temp3"><b>--.-</b></span>
 									<small class="fs-2"> °C</small>
 								</td>
 							</tr>
 							<tr>
 								<td class="text-end">
-									<span class="fs-1"><b>Hum: </b></span>
+									<span class="fs-2">Hum: </span>
 								</td>
 								<td>
-									<span class="fs-1" id="hum3">--.-</span>
+									<span class="fs-1" id="hum3"><b>--.-</b></span>
 									<small class="fs-2"> %</small>
 								</td>
 							</tr>
@@ -157,25 +157,25 @@
 						 <table class="table table-borderless">
 							<tr>
 								<td class="text-end"><span>Ventilador: </span></td>
-								<td><span id="estadoVent3" class="badge bg-orange">Sin Datos</span>
+								<td><span id="estadoVent3" class="badge bg-orange">SIN DATOS</span>
 							</tr>
 							<tr>
 								<td class="text-end"><span>Calentador: </span></td>
-								<td><span id="estadoCalent3" class="badge bg-orange">Sin Datos</span>
+								<td><span id="estadoCalent3" class="badge bg-orange">SIN DATOS</span>
 							</tr>
 							<tr>
 								<td class="text-end">Nivel de Agua: </td>
-								<td><span id="estadoNivel3" class="badge bg-orange">Sin Datos</span></td>
+								<td><span id="estadoNivel3" class="badge bg-orange">SIN DATOS</span></td>
 							</tr>
 							<tr>
 								<td class="text-end">Humidificador: </td>
-								<td><span id="estadoHumi3" class="badge bg-orange">Sin Datos</span></td>
+								<td><span id="estadoHumi3" class="badge bg-orange">SIN DATOS</span></td>
 							</tr>
 						</table>
 
 						<div class="text-center">
 							<a class="btn btn-primary {% block ambiente3Link %}{% endblock %}" href="/umsa-iem/public/?action=ambiente3" role="button">Detalles</a>
-							<a class="btn btn-danger" href="#" role="button">Parar</a>
+							<a class="btn btn-danger px-5" href="#" role="button">Parar</a>
 						</div>
 					</div>
 				</div>
@@ -224,7 +224,7 @@ const DEVICE_ID_1 = 'esp_amb1';
 
 //conectando al websocket
 //const wsServer = 'ws://10.245.59.12:8080';
-const wsServer = 'ws://192.168.1.8:8080';
+const wsServer = 'ws://192.168.1.229:8080';
 let websocket = null;
 let intervalo_reconex = 5000; //reconexion cada 5 seg
 let contador_reconex = 0;
@@ -287,36 +287,36 @@ function conectarWS(){
 
 				else if (datos_atrapados.action === 'feedbackVent' && datos_atrapados.id_disp === DEVICE_ID_1){
 					if (datos_atrapados.estado_ahora == 1){
-						estadoVent1.innerText = 'Activado';
+						estadoVent1.innerText = 'ACTIVADO';
 						estadoVent1.classList.remove('bg-danger', 'bg-orange', 'bg-warning');
 						estadoVent1.classList.add('bg-success');
 					}
 					else if (datos_atrapados.estado_ahora == 0){
-						estadoVent1.innerText = 'Desactivado';
+						estadoVent1.innerText = 'DESACTIVADO';
 						estadoVent1.classList.remove('bg-success', 'bg-orange', 'bg-warning');
 						estadoVent1.classList.add('bg-danger');
 					}
 				}
 				else if (datos_atrapados.action === 'feedbackCalent' && datos_atrapados.id_disp === DEVICE_ID_1){
 					if (datos_atrapados.estado_ahora == 1){
-						estadoCalent1.innerText = 'Activado';
+						estadoCalent1.innerText = 'ACTIVADO';
 						estadoCalent1.classList.remove('bg-danger', 'bg-orange', 'bg-warning');
 						estadoCalent1.classList.add('bg-success');
 					}
 					else if (datos_atrapados.estado_ahora == 0){
-						estadoCalent1.innerText = 'Desactivado';
+						estadoCalent1.innerText = 'DESACTIVADO';
 						estadoCalent1.classList.remove('bg-success', 'bg-orange', 'bg-warning');
 						estadoCalent1.classList.add('bg-danger');
 					}
 				}
 				else if (datos_atrapados.action === 'feedbackHumi' && datos_atrapados.id_disp === DEVICE_ID_1){
 					if (datos_atrapados.estado_ahora == 1){
-						estadoHumi1.innerText = 'Activado';
+						estadoHumi1.innerText = 'ACTIVADO';
 						estadoHumi1.classList.remove('bg-danger', 'bg-orange', 'bg-warning');
 						estadoHumi1.classList.add('bg-success');
 					}
 					else if (datos_atrapados.estado_ahora == 0){
-						estadoHumi1.innerText = 'Desactivado';
+						estadoHumi1.innerText = 'DESACTIVADO';
 						estadoHumi1.classList.remove('bg-success', 'bg-orange', 'bg-warning');
 						estadoHumi1.classList.add('bg-danger');
 					}
@@ -340,7 +340,7 @@ function conectarWS(){
 			monitor1.classList.remove('bg-success', 'bg-warning');
 			monitor1.classList.add('bg-danger');
 			//monitor1.innerText = "Desconetado"; 
-			estadoVent1.innerText = 'Sin Datos';
+			estadoVent1.innerText = 'SIN DATOS';
 			estadoVent1.classList.remove('bg-success', 'bg-danger', 'bg-warning');
 			estadoVent1.classList.add('bg-orange');
 

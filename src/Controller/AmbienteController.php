@@ -15,80 +15,80 @@ class AmbienteController extends Controller{
 	}
 
 	public function pagAmbiente1(): void{
-		if (UsuarioController::isLoggedIn()){
+//		if (UsuarioController::isLoggedIn()){
 			$template = 'ambientes/ambiente_1.html.twig';
 			$args = [];
 
 			print $this->twig->render($template, $args);
-		}
-		else {
-			$this->defaultController->pagLogin();
-		}
+//		}
+//		else {
+//			$this->defaultController->pagLogin();
+//		}
 	}
 
 	public function pagAmbiente2(): void{
-		if (UsuarioController::isLoggedIn()){
+//		if (UsuarioController::isLoggedIn()){
 			$template = 'ambientes/ambiente_2.html.twig';
 			$args = [];
 
 			print $this->twig->render($template, $args);
-		}
-		else {
-			$this->defaultController->pagLogin();
-		}
+//		}
+//		else {
+//			$this->defaultController->pagLogin();
+//		}
 	}
 	
 	public function pagAmbiente3(): void{
-		if (UsuarioController::isLoggedIn()){
+//		if (UsuarioController::isLoggedIn()){
 			$template = 'ambientes/ambiente_3.html.twig';
 			$args = [];
 
 			print $this->twig->render($template, $args);
-		}
-		else {
-			$this->defaultController->pagLogin();
-		}
+//		}
+//		else {
+//			$this->defaultController->pagLogin();
+//		}
 	}
 
 	//funciones para los reportes de cada ambiente
 	public function pagReportes1(): void{
 		$ambientes = $this->ambienteRepository->findAll();
 
-		if (UsuarioController::isLoggedIn()){
+//		if (UsuarioController::isLoggedIn()){
 			$template = 'reportes/reportes_amb1.html.twig';
 			$args = [
 				'ambientes' => $ambientes,
 			];
 
 			print $this->twig->render($template, $args);
-		}
-		else {
-			$this->defaultController->pagLogin();
-		}
+//		}
+//		else {
+//			$this->defaultController->pagLogin();
+//		}
 	}
 
 	public function pagReportes2(): void{
-		if (UsuarioController::isLoggedIn()){
+//		if (UsuarioController::isLoggedIn()){
 			$template = 'reportes/reportes_amb2.html.twig';
 			$args = [];
 
 			print $this->twig->render($template, $args);
-		}
-		else {
-			$this->defaultController->pagLogin();
-		}
+//		}
+//		else {
+//			$this->defaultController->pagLogin();
+//		}
 	}
 	
 	public function pagReportes3(): void{
-		if (UsuarioController::isLoggedIn()){
+//		if (UsuarioController::isLoggedIn()){
 			$template = 'reportes/reportes_amb3.html.twig';
 			$args = [];
 
 			print $this->twig->render($template, $args);
-		}
-		else {
-			$this->defaultController->pagLogin();
-		}
+//		}
+//		else {
+//			$this->defaultController->pagLogin();
+//		}
 	}
 	//funcion para obtener el ultimo dato de temp y hum del dispositivo seleccionado 
 	public function ultimosDatos(): void{
