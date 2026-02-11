@@ -501,7 +501,7 @@ $server->on("message", function (Server $server, Frame $frame) use ($dispAutenti
 			break;
 
 		//caso para el feedback enviado por el dispositivo
-		case 'feedbackVent': case 'feedbackCalent': case 'feedbackHumi':
+		case 'feedbackVent': case 'feedbackCalent': case 'feedbackHumi': case 'feedbackNivel':
 			try{
 				$controller->procesoFeedback($datos_recibidos);
 

@@ -142,7 +142,7 @@ const DEVICE_ID = 'esp_amb1';
 
 //conectando al websocket
 //const wsServer = 'ws://10.245.59.12:8080';
-const wsServer = 'ws://192.168.1.229:8080';
+const wsServer = 'ws://192.168.10.3:8080';
 let websocket = null;
 let intervalo_reconex = 5000; //intentando reconectar cada 5s
 let contador_reconex = 0;
@@ -150,12 +150,16 @@ let intervaloHeartbeat = null;
 
 //****************************************
 //RECOPILANDO ELEMENTOS DEL DOCUMENTO HTML
-//para el estado del ventilador
 const estadoVent = document.getElementById('estadoVent');
+const estadoCalent = document.getElementById('estadoCalent');
+const estadoHumi = document.getElementById('estadoHumi');
+const estadoNivel = document.getElementById('estadoNivel');
+
 const valorTemp1 = document.getElementById('temp1-vivo');
 const valorHum1 = document.getElementById('hum1-vivo');
 const valorFecha1 = document.getElementById('fecha1-vivo');
 const estadoMonitor1 = document.getElementById('ws-status');
+
 
 //para modificar el rango de la velocidad del ventilador
 const rangoIn = document.getElementById('vel_vent');
@@ -184,9 +188,18 @@ function conectarWS(){
 			contador_reconex = 0;
 
 			//para el indicador de parpadeo
-			estadoMonitor1.classList.remove('bg-warning', 'bg-danger');
+			estadoMonitor1.classList.remove('bg-warning', 'bg-danger', 'bg-success');
 			estadoMonitor1.classList.add('bg-warning');
 			
+			//deshabilitando todos los botones por la desconexion del dispositivo
+			botonOnVent.disabled = true;
+			botonOffVent.disabled = true;
+			rangoIn.disabled = true;
+			botonOnCalent.disabled = true;
+			botonOffCalent.disabled = true;
+			botonOnHumi.disabled = true;
+			botonOffHumi.disabled = true;
+
 			 //limpiando heartbeat si lo hubiera
 			if (intervaloHeartbeat){
 				clearInterval(intervaloHeartbeat);
@@ -212,11 +225,11 @@ function conectarWS(){
 
 		//MENSAJE
 		websocket.onmessage = function (event){
-			try{
-				//data son los datos emitidos y estos son guardados en datos_atrapados
-				const datos_atrapados = JSON.parse(event.data);
-				console.log(datos_atrapados);
+			//data son los datos emitidos y estos son guardados en datos_atrapados
+			const datos_atrapados = JSON.parse(event.data);
+			console.log(datos_atrapados);
 
+			try{
 				if (datos_atrapados.action === 'datos_actualizados' && datos_atrapados.id_disp === DEVICE_ID){
 					valorTemp1.innerText = parseFloat(datos_atrapados.temp).toFixed(1);
 					valorHum1.innerText = parseFloat(datos_atrapados.hum).toFixed(1);
@@ -281,6 +294,53 @@ function conectarWS(){
 						botonOffHumi.disabled = true;
 					}
 				}
+				else if (datos_atrapados.action === 'feedbackNivel' && datos_atrapados.id_disp === DEVICE_ID){
+					if (datos_atrapados.estado_ahora == 1){
+						estadoNivel.innerText = 'LLENO';
+						estadoNivel.classList.remove('bg-danger', 'bg-orange', 'bg-warning');
+						estadoNivel.classList.add('bg-success');
+					}
+					else if (datos_atrapados.estado_ahora == 0){
+						estadoNivel.innerText = 'VACÍO';
+						estadoNivel.classList.remove('bg-success', 'bg-orange', 'bg-warning');
+						estadoNivel.classList.add('bg-danger');
+					}
+							
+				}
+				else if (datos_atrapados.action === 'control_desconex' && datos_atrapados.id_disp === DEVICE_ID){
+					//para el indicador de parpadeo
+					estadoMonitor1.classList.remove('bg-warning', 'bg-danger', 'bg-success'); estadoMonitor1.classList.add('bg-warning');
+
+					//deshabilitando todos los botones por la desconexion del dispositivo
+					botonOnVent.disabled = true;
+					botonOffVent.disabled = true;
+					rangoIn.disabled = true;
+					botonOnCalent.disabled = true;
+					botonOffCalent.disabled = true;
+					botonOnHumi.disabled = true;
+					botonOffHumi.disabled = true;
+
+					//para el span del ventilador
+					estadoVent.innerText = 'SIN DATOS';
+					estadoVent.classList.remove('bg-success', 'bg-warning', 'bg-danger');
+					estadoVent.classList.add('bg-orange');
+					
+					//para el span del calentador
+					estadoCalent.innerText = 'SIN DATOS';
+					estadoCalent.classList.remove('bg-success', 'bg-warning', 'bg-danger');
+					estadoCalent.classList.add('bg-orange');
+
+					//para el span del humidificador
+					estadoHumi.innerText = 'SIN DATOS';
+					estadoHumi.classList.remove('bg-success', 'bg-warning', 'bg-danger');
+					estadoHumi.classList.add('bg-orange');
+
+					//para el span del nivel de agua
+					estadoNivel.innerText = 'SIN DATOS';
+					estadoNivel.classList.remove('bg-success', 'bg-warning', 'bg-danger');
+					estadoNivel.classList.add('bg-orange');
+				}
+
 			} catch(error){
 				console.error("Error al atrapar los datos", error);	
 			}
@@ -297,8 +357,17 @@ function conectarWS(){
 			}
 
 			console.log("Desconectado");
-			estadoMonitor1.classList.remove('bg-danger', 'bg-success');
+			estadoMonitor1.classList.remove('bg-success', 'bg-warning');
 			estadoMonitor1.classList.add('bg-danger');
+
+			//deshabilitando todos los botones por la desconexion del dispositivo
+			botonOnVent.disabled = true;
+			botonOffVent.disabled = true;
+			rangoIn.disabled = true;
+			botonOnCalent.disabled = true;
+			botonOffCalent.disabled = true;
+			botonOnHumi.disabled = true;
+			botonOffHumi.disabled = true;
 			
 			//para el span del ventilador
 			estadoVent.innerText = 'SIN DATOS';
@@ -315,6 +384,11 @@ function conectarWS(){
 			estadoHumi.classList.remove('bg-success', 'bg-warning', 'bg-danger');
 			estadoHumi.classList.add('bg-orange');
 
+			//para el span del nivel de agua
+			estadoNivel.innerText = 'SIN DATOS';
+			estadoNivel.classList.remove('bg-success', 'bg-warning', 'bg-danger');
+			estadoNivel.classList.add('bg-orange');
+			
 			//intentanto reconectar
 			setTimeout(function(){
 				conectarWS();	
