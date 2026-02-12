@@ -615,8 +615,8 @@ $server->set([
 	'task_worker_num' => 2, //workers para realizar tareas pesadas como la emision de datos
 	'task_enable_coroutine' => true, //activando la corutinas
 	'max_request' => 0, //infinitos requests
-	'heartbeat_check_interval' => 10,
-	'heartbeat_idle_time' => 20,
+	'heartbeat_check_interval' => 7,
+	'heartbeat_idle_time' => 15,
 ]);
 
 $server->start();

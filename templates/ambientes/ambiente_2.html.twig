@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Ambientes{% endblock %}
+{% block title %}Ambiente 2{% endblock %}
 {% block ambiente2 %}active{% endblock %}
 
 {% block body %}
@@ -12,24 +12,24 @@
 				<div class="col-md-12">
 
 					<div class="card w-100 mb-3 shadow">
-						<h5 class="card-header text-center text-white fs-4 bg-danger" id="ws-status">Ambiente 2</h5>
+						<h5 class="card-header text-center text-white fs-4 bg-danger" id="ws-status">AMBIENTE 2</h5>
 					  <div class="card-body">
 							<table class="table table-borderless">
 								<tr>
 									<td class="text-end">
-										<span class="fs-3"><b>Temp: </b></span>
+										<span class="fs-3">Temp: </span>
 									</td>
 									<td>
-										<span class="fs-2" id="temp1-vivo">--.-</span>
+										<span class="fs-2" id="temp1-vivo"><b>--.-</b></span>
 										<small class="fs-3"> °C</small>
 									</td>
 								</tr>
 								<tr>
 									<td class="text-end">
-										<span class="fs-3"><b>Hum: </b></span>
+										<span class="fs-3">Hum: </span>
 									</td>
 									<td>
-										<span class="fs-2" id="hum1-vivo">--.-</span>
+										<span class="fs-2" id="hum1-vivo"><b>--.-</b></span>
 										<small class="fs-3"> %</small>
 									</td>
 								</tr>
@@ -44,25 +44,25 @@
 
 					<div class="card w-100 mb-3 shadow">
 	
-					<h5 class="card-header text-center">Estados de Conexión</h5>
+					<h5 class="card-header text-center">Estados del Sistema</h5>
 					  <div class="card-body">
 
 							<table class="table table-borderless">
 								<tr>
 									<td class="text-end"><span>Ventilador: </span></td>
-									<td><span id="estadoVent" class="badge bg-orange">Sin Datos</span>
+									<td><span id="estadoVent" class="badge bg-orange">SIN DATOS</span>
 								</tr>
 								<tr>
 									<td class="text-end"><span>Calentador: </span></td>
-									<td><span id="estadoCalent" class="badge bg-orange">Sin Datos</span>
+									<td><span id="estadoCalent" class="badge bg-orange">SIN DATOS</span>
 								</tr>
 								<tr>
 									<td class="text-end">Nivel de Agua: </td>
-									<td><span id="estadoNivel" class="badge bg-orange">Sin Datos</span></td>
+									<td><span id="estadoNivel" class="badge bg-orange">SIN DATOS</span></td>
 								</tr>
 								<tr>
 									<td class="text-end">Humidificador: </td>
-									<td><span id="estadoHumi" class="badge bg-orange">Sin Datos</span></td>
+									<td><span id="estadoHumi" class="badge bg-orange">SIN DATOS</span></td>
 								</tr>
 							</table>
 
@@ -79,61 +79,683 @@
 			  <div class="card-header">
 				<ul class="nav nav-tabs card-header-tabs">
 				  <li class="nav-item">
-					<a class="nav-link active" aria-current="true" role="button" id="tab_man" onclick="contenedorManual(this);">Manual</a>
+					<a class="nav-link active" aria-current="true" role="button" id="tab_man" onclick="contenedorManual(this);">CONTROL MANUAL</a>
 				  </li>
 				  <li class="nav-item">
-					<a class="nav-link" aria-current="true" role="button" id="tab_auto" onclick="contenedorAutomatico(this);">Automatico</a>
+					<a class="nav-link" aria-current="true" role="button" id="tab_auto" onclick="contenedorAutomatico(this);">CONTROL AUTOMÁTICO</a>
 				  </li>
 				</ul>
 			  </div>
 			  <div class="card-body" id="contenedor_man_auto">
-					<h5 class="card-title text-center">Control del Ventilador</h5>
+					<h5 class="card-title text-center">VENTILADOR</h5>
 					<div class="row">
-						<div class="col-5 text-center">
-							<label class="form-label">Operación</label>
+						<div class="col-5 text-center mt-4">
+							<label class="form-label">OPERACIÓN</label>
 							<br>
-							<button type="button" class="btn btn-success me-1 mb-2" onclick="enviarOrden(1);">Activar</button>		
-							<button type="button" class="btn btn-danger me-1 mb-2" onclick="enviarOrden(0);">Desactivar</button>		
+							<button id="botonOnVent" type="button" class="btn btn-success btn-lg me-1 mb-2" onclick="enviarOrdenVent(1);">Activar</button>		
+							<button id="botonOffVent" type="button" class="btn btn-danger btn-lg me-1 mb-2" onclick="enviarOrdenVent(0);">Desactivar</button>		
 						</div>
-						<div class="col-7 text-center">
-							<label for="vel_vent" class="form-label">Intensidad del Ventilador</label>
-							<input type="range" class="form-range" min="0" max="100" value="0" id="vel_vent">
+						<div class="col-7 text-center mt-4">
+							<label for="vel_vent" class="form-label">INTENSIDAD</label>
+							<input type="range" class="form-range" min="0" max="100" value="50" id="vel_vent">
 							<small><output for="vel_vent" id="vel_vent_out" aria-hidden="true">0</output> [%] | </small>
 							<small><output for="vel_vent" id="caudal_vent" aria-hidden="true">0.0</output> [m/s]</small>
 						</div>
 					</div>
+					
 					<br>
+					<hr>
 					<br>
 
 					<div class="row">
 						<div class="col-6 text-center">
-							<h5 class="card-title text-center">Control del Calentador</h5>
-							<label class="form-label">Operación</label>
+							<h5 class="card-title text-center mb-4">CALENTADOR</h5>
+							<label class="form-label">OPERACIÓN</label>
 							<br>
-							<button type="button" class="btn btn-success me-1 mb-2">Activar</button>		
-							<button type="button" class="btn btn-danger me-1 mb-2">Desactivar</button>		
+							<button id="botonOnCalent" type="button" class="btn btn-success btn-lg me-1 mb-2" onclick="enviarOrdenCalent(1);">Activar</button>		
+							<button id="botonOffCalent" type="button" class="btn btn-danger btn-lg me-1 mb-2" onclick="enviarOrdenCalent(0);">Desactivar</button>	
 						</div>
 						<div class="col-6 text-center">
-							<h5 class="card-title text-center">Control del Hudificador</h5>
-							<label class="form-label">Operación</label>
+							<h5 class="card-title text-center mb-4">HUMIDIFICADOR</h5>
+							<label class="form-label">OPERACIÓN</label>
 							<br>
-							<button type="button" class="btn btn-success me-1 mb-2">Activar</button>		
-							<button type="button" class="btn btn-danger me-1 mb-2">Desactivar</button>		
+							<button id="botonOnHumi" type="button" class="btn btn-success btn-lg me-1 mb-2" onclick="enviarOrdenHumi(1);">Activar</button>		
+							<button id="botonOffHumi" type="button" class="btn btn-danger btn-lg me-1 mb-2" onclick="enviarOrdenHumi(0);">Desactivar</button>		
 						</div>
 					</div>
-					<div class="row">
-						<div class="mt-5 text-end">
-							<a class="btn btn-danger" href="/umsa-iem/public/?action=ambientes" role="button"><i class="bi bi-arrow-left"></i> Atrás</a>
-						</div>
-					</div>
-					<br>
 
 			  </div>
 			</div>
+			<!--
+				<a class="btn btn-danger bg-orange mt-5" href="/umsa-iem/public/?action=ambientes" role="button">
+					<i class="bi bi-arrow-left"></i> Atrás
+				</a>
+			-->
 
 		</div>
 	</div>
 
-	<a class="btn btn-danger" href="/umsa-iem/public/?action=ambientes" role="button"><i class="bi bi-arrow-left"></i> Atrás</a>
+<script>
+
+//*************************************************************
+const DEVICE_ID = 'esp_amb2';
+
+//conectando al websocket
+//const wsServer = 'ws://10.245.59.12:8080';
+const wsServer = 'ws://192.168.10.4:8080';
+let websocket = null;
+let intervalo_reconex = 5000; //intentando reconectar cada 5s
+let contador_reconex = 0;
+let intervaloHeartbeat = null;
+
+//****************************************
+//RECOPILANDO ELEMENTOS DEL DOCUMENTO HTML
+const estadoVent = document.getElementById('estadoVent');
+const estadoCalent = document.getElementById('estadoCalent');
+const estadoHumi = document.getElementById('estadoHumi');
+const estadoNivel = document.getElementById('estadoNivel');
+
+const valorTemp1 = document.getElementById('temp1-vivo');
+const valorHum1 = document.getElementById('hum1-vivo');
+const valorFecha1 = document.getElementById('fecha1-vivo');
+const estadoMonitor1 = document.getElementById('ws-status');
+
+
+//para modificar el rango de la velocidad del ventilador
+const rangoIn = document.getElementById('vel_vent');
+const rangoPorcentaje = document.getElementById('vel_vent_out');
+const rangoCaudal = document.getElementById('caudal_vent');
+
+//para botones habilitados y deshabilitados
+const botonOnVent = document.getElementById('botonOnVent');
+const botonOffVent = document.getElementById('botonOffVent');
+const botonOnCalent = document.getElementById('botonOnCalent');
+const botonOffCalent = document.getElementById('botonOffCalent');
+const botonOnHumi = document.getElementById('botonOnHumi');
+const botonOffHumi = document.getElementById('botonOffHumi');
+
+
+//****************************************
+
+//CONEXION CON EL SERVIDOR WEBSOCKET
+function conectarWS(){
+	if (contador_reconex <= 50){
+		websocket = new WebSocket(wsServer);
+
+		//ABRIR
+		websocket.onopen = function (event) {
+			console.log("Connected to WebSocket server.");
+			contador_reconex = 0;
+
+			//para el indicador de parpadeo
+			estadoMonitor1.classList.remove('bg-warning', 'bg-danger', 'bg-success');
+			estadoMonitor1.classList.add('bg-warning');
+			
+			//deshabilitando todos los botones por la desconexion del dispositivo
+			botonOnVent.disabled = true;
+			botonOffVent.disabled = true;
+			rangoIn.disabled = true;
+			botonOnCalent.disabled = true;
+			botonOffCalent.disabled = true;
+			botonOnHumi.disabled = true;
+			botonOffHumi.disabled = true;
+
+			 //limpiando heartbeat si lo hubiera
+			if (intervaloHeartbeat){
+				clearInterval(intervaloHeartbeat);
+				intervaloHeartbeat = null;
+			}
+
+			//intervalo de para enviar un heartbeat
+			intervaloHeartbeat = setInterval(() => {
+				if (websocket.readyState === WebSocket.OPEN) {
+					const heartbeat = {
+						id_disp: "cliente_web",
+						action: "heartbeat",
+						estado: "vivo",
+					};
+
+					websocket.send(JSON.stringify(heartbeat));
+					console.log(heartbeat);
+				}
+			}, 10000);
+
+		};
+
+
+		//MENSAJE
+		websocket.onmessage = function (event){
+			//data son los datos emitidos y estos son guardados en datos_atrapados
+			const datos_atrapados = JSON.parse(event.data);
+			//console.log(datos_atrapados);
+
+			try{
+				if (datos_atrapados.action === 'datos_actualizados' && datos_atrapados.id_disp === DEVICE_ID){
+					valorTemp1.innerText = parseFloat(datos_atrapados.temp).toFixed(1);
+					valorHum1.innerText = parseFloat(datos_atrapados.hum).toFixed(1);
+					valorFecha1.innerText = datos_atrapados.fecha;
+						
+					//Efecto visual: parpadeo suave en el log para saber que está vivo
+					estadoMonitor1.classList.add('bg-warning');
+					setTimeout(() => {
+						estadoMonitor1.classList.remove('bg-warning');
+						estadoMonitor1.classList.add('bg-success');
+						//estadoMonitor1.innerText = "Conectado";
+					}, 150);
+				}		
+
+				else if (datos_atrapados.action === 'feedbackVent' && datos_atrapados.id_disp === DEVICE_ID){
+					if (datos_atrapados.estado_ahora == 1){
+						estadoVent.innerText = 'ACTIVADO';
+						estadoVent.classList.remove('bg-danger', 'bg-orange', 'bg-warning');
+						estadoVent.classList.add('bg-success');
+						botonOnVent.disabled = true;
+						botonOffVent.disabled = false;
+						rangoIn.disabled = false;
+					}
+					else if (datos_atrapados.estado_ahora == 0){
+						estadoVent.innerText = 'DESACTIVADO';
+						estadoVent.classList.remove('bg-success', 'bg-orange', 'bg-warning');
+						estadoVent.classList.add('bg-danger');
+						botonOnVent.disabled = false;
+						botonOffVent.disabled = true;
+						rangoIn.disabled = true;
+					}
+				}
+				else if (datos_atrapados.action === 'feedbackCalent' && datos_atrapados.id_disp === DEVICE_ID){
+					if (datos_atrapados.estado_ahora == 1){
+						estadoCalent.innerText = 'ACTIVADO';
+						estadoCalent.classList.remove('bg-danger', 'bg-orange', 'bg-warning');
+						estadoCalent.classList.add('bg-success');
+						botonOnCalent.disabled = true;
+						botonOffCalent.disabled = false;
+					}
+					else if (datos_atrapados.estado_ahora == 0){
+						estadoCalent.innerText = 'DESACTIVADO';
+						estadoCalent.classList.remove('bg-success', 'bg-orange', 'bg-warning');
+						estadoCalent.classList.add('bg-danger');
+						botonOnCalent.disabled = false;
+						botonOffCalent.disabled = true;
+					}
+				}
+				else if (datos_atrapados.action === 'feedbackHumi' && datos_atrapados.id_disp === DEVICE_ID){
+					if (datos_atrapados.estado_ahora == 1){
+						estadoHumi.innerText = 'ACTIVADO';
+						estadoHumi.classList.remove('bg-danger', 'bg-orange', 'bg-warning');
+						estadoHumi.classList.add('bg-success');
+						botonOnHumi.disabled = true;
+						botonOffHumi.disabled = false;
+					}
+					else if (datos_atrapados.estado_ahora == 0){
+						estadoHumi.innerText = 'DESACTIVADO';
+						estadoHumi.classList.remove('bg-success', 'bg-orange', 'bg-warning');
+						estadoHumi.classList.add('bg-danger');
+						botonOnHumi.disabled = false;
+						botonOffHumi.disabled = true;
+					}
+				}
+				else if (datos_atrapados.action === 'feedbackNivel' && datos_atrapados.id_disp === DEVICE_ID){
+					if (datos_atrapados.estado_ahora == 1){
+						estadoNivel.innerText = 'LLENO';
+						estadoNivel.classList.remove('bg-danger', 'bg-orange', 'bg-warning');
+						estadoNivel.classList.add('bg-success');
+					}
+					else if (datos_atrapados.estado_ahora == 0){
+						estadoNivel.innerText = 'BAJO';
+						estadoNivel.classList.remove('bg-success', 'bg-orange', 'bg-warning');
+						estadoNivel.classList.add('bg-danger');
+					}
+							
+				}
+				else if (datos_atrapados.action === 'control_desconex' && datos_atrapados.id_disp === DEVICE_ID){
+					//para el indicador de parpadeo
+					estadoMonitor1.classList.remove('bg-warning', 'bg-danger', 'bg-success');
+					estadoMonitor1.classList.add('bg-warning');
+
+					//deshabilitando todos los botones por la desconexion del dispositivo
+					botonOnVent.disabled = true;
+					botonOffVent.disabled = true;
+					rangoIn.disabled = true;
+					botonOnCalent.disabled = true;
+					botonOffCalent.disabled = true;
+					botonOnHumi.disabled = true;
+					botonOffHumi.disabled = true;
+
+					//para el span del ventilador
+					estadoVent.innerText = 'SIN DATOS';
+					estadoVent.classList.remove('bg-success', 'bg-warning', 'bg-danger');
+					estadoVent.classList.add('bg-orange');
+					
+					//para el span del calentador
+					estadoCalent.innerText = 'SIN DATOS';
+					estadoCalent.classList.remove('bg-success', 'bg-warning', 'bg-danger');
+					estadoCalent.classList.add('bg-orange');
+
+					//para el span del humidificador
+					estadoHumi.innerText = 'SIN DATOS';
+					estadoHumi.classList.remove('bg-success', 'bg-warning', 'bg-danger');
+					estadoHumi.classList.add('bg-orange');
+
+					//para el span del nivel de agua
+					estadoNivel.innerText = 'SIN DATOS';
+					estadoNivel.classList.remove('bg-success', 'bg-warning', 'bg-danger');
+					estadoNivel.classList.add('bg-orange');
+				}
+
+			} catch(error){
+				console.error("Error al atrapar los datos", error);	
+			}
+
+		}
+
+
+		//CERRAR
+		websocket.onclose = function (event) {
+			//limpiando heartbeat para la desconexion
+			if (intervaloHeartbeat){
+				clearInterval(intervaloHeartbeat);
+				intervaloHeartbeat = null;
+			}
+
+			console.log("Desconectado");
+			estadoMonitor1.classList.remove('bg-success', 'bg-warning');
+			estadoMonitor1.classList.add('bg-danger');
+
+			//deshabilitando todos los botones por la desconexion del dispositivo
+			botonOnVent.disabled = true;
+			botonOffVent.disabled = true;
+			rangoIn.disabled = true;
+			botonOnCalent.disabled = true;
+			botonOffCalent.disabled = true;
+			botonOnHumi.disabled = true;
+			botonOffHumi.disabled = true;
+			
+			//para el span del ventilador
+			estadoVent.innerText = 'SIN DATOS';
+			estadoVent.classList.remove('bg-success', 'bg-warning', 'bg-danger');
+			estadoVent.classList.add('bg-orange');
+			
+			//para el span del calentador
+			estadoCalent.innerText = 'SIN DATOS';
+			estadoCalent.classList.remove('bg-success', 'bg-warning', 'bg-danger');
+			estadoCalent.classList.add('bg-orange');
+
+			//para el span del humidificador
+			estadoHumi.innerText = 'SIN DATOS';
+			estadoHumi.classList.remove('bg-success', 'bg-warning', 'bg-danger');
+			estadoHumi.classList.add('bg-orange');
+
+			//para el span del nivel de agua
+			estadoNivel.innerText = 'SIN DATOS';
+			estadoNivel.classList.remove('bg-success', 'bg-warning', 'bg-danger');
+			estadoNivel.classList.add('bg-orange');
+			
+			//intentanto reconectar
+			setTimeout(function(){
+				conectarWS();	
+			}, intervalo_reconex);
+		};
+
+
+		//ERROR
+		websocket.onerror = function (event, e) {
+			console.log('Error occurred: ' + event.data);
+		};
+
+	}
+	else {
+		console.log("Los intentos de reconexion han llegado a su limite");
+	}
+	contador_reconex++;
+}
+
+//*************************************************************
+//conectando el servidor WebSocket
+conectarWS();
+//*************************************************************
+
+//funcion para enviar mensajes hacia el servidor WebSocket
+function enviarOrdenVent(estado){
+	const payload = {
+		id_objetivo: DEVICE_ID,
+		action: "comando",
+		tipo: "ordenVent",
+		valor: estado,		
+	}
+
+	//verficando que el servidor este abierto: true
+	if (websocket.readyState === WebSocket.OPEN){
+		const mensaje = JSON.stringify(payload);
+		websocket.send(mensaje);
+		console.log("Datos enviados: ", mensaje);
+
+		//cambiando el estado del span 
+		if (estado == 1){
+			estadoVent.innerText = 'ACTIVANDO';
+			estadoVent.classList.remove('bg-danger', 'bg-orange', 'bg-success');
+			estadoVent.classList.add('bg-warning');
+		}
+		else if (estado == 0){
+			estadoVent.innerText = 'DESACTIVANDO';
+			estadoVent.classList.remove('bg-success', 'bg-orange', 'bg-danger');
+			estadoVent.classList.add('bg-warning');
+		}
+	}
+	else{
+		alert("No hay conexión con el servidor");			
+		console.log("No hay conexión con el servidor");			
+	}
+}
+
+//orden para el calentador
+function enviarOrdenCalent(estado){
+	const payload = {
+		id_objetivo: DEVICE_ID,
+		action: "comando",
+		tipo: "ordenCalent",
+		valor: estado,		
+	}
+
+	//verficando que el servidor este abierto: true
+	if (websocket.readyState === WebSocket.OPEN){
+		const mensaje = JSON.stringify(payload);
+		websocket.send(mensaje);
+		console.log("Datos enviados: ", mensaje);
+
+		//cambiando el estado del span 
+		if (estado == 1){
+			estadoCalent.innerText = 'ACTIVANDO';
+			estadoCalent.classList.remove('bg-danger', 'bg-orange', 'bg-success');
+			estadoCalent.classList.add('bg-warning');
+		}
+		else if (estado == 0){
+			estadoCalent.innerText = 'DESACTIVANDO';
+			estadoCalent.classList.remove('bg-success', 'bg-orange', 'bg-danger');
+			estadoCalent.classList.add('bg-warning');
+		}
+	}
+	else{
+		alert("No hay conexión con el servidor");			
+		console.log("No hay conexión con el servidor");			
+	}
+}
+
+//orden para el humidificador
+function enviarOrdenHumi(estado){
+	const payload = {
+		id_objetivo: DEVICE_ID,
+		action: "comando",
+		tipo: "ordenHumi",
+		valor: estado,		
+	}
+
+	//verficando que el servidor este abierto: true
+	if (websocket.readyState === WebSocket.OPEN){
+		const mensaje = JSON.stringify(payload);
+		websocket.send(mensaje);
+		console.log("Datos enviados: ", mensaje);
+
+		//cambiando el estado del span 
+		if (estado == 1){
+			estadoHumi.innerText = 'ACTIVANDO';
+			estadoHumi.classList.remove('bg-danger', 'bg-orange', 'bg-success');
+			estadoHumi.classList.add('bg-warning');
+		}
+		else if (estado == 0){
+			estadoHumi.innerText = 'DESACTIVANDO';
+			estadoHumi.classList.remove('bg-success', 'bg-orange', 'bg-danger');
+			estadoHumi.classList.add('bg-warning');
+		}
+	}
+	else{
+		alert("No hay conexión con el servidor");			
+		console.log("No hay conexión con el servidor");			
+	}
+}
+
+//funcion para actualizar los valores del porcentaje y caudal
+function valoresVent(valor){
+	let valor_caudal = (valor * (16 / 100)).toFixed(2);
+
+	//pasando los valores
+	rangoPorcentaje.textContent = valor;
+	rangoCaudal.textContent = valor_caudal;
+
+	//console.log(valor);
+	console.log(valor);
+
+	const payload_rango = {
+		id_objetivo: DEVICE_ID,
+		action: "comando",
+		tipo: "ordenVent_Var",
+		valor: valor,		
+	}
+
+	//verficando que el servidor este abierto: true
+	if (websocket.readyState === WebSocket.OPEN){
+		const mensaje = JSON.stringify(payload_rango);
+		websocket.send(mensaje);
+//		console.log("Datos enviados: ", mensaje);
+	}
+	else{
+		console.log("El servidor no esta conectado");
+	}
+}
+
+//escuchando el evento del deslizador
+rangoIn.addEventListener('input', function() {
+	valoresVent(this.value);
+});
+
+//ejecutar al inciar la pagina
+valoresVent(rangoIn.value);
+
+//***************************************************************************
+//RECUPERAR ULTIMOS VALORES DE TEMPERATURA Y HUMEDAD DE LA DB
+//function para obtener el ultimo dato desde la base de datos
+async function cargarUltimosDatos() {
+	//se buscan los ultimos datos de temperatura, humedad y fecha
+	try{
+		const response = await fetch(`?action=consulta_datos&id_disp=${DEVICE_ID}`);
+		const datos = await response.json();
+
+		if (datos.estado === 'datos_recuperados'){
+			console.log("Datos cargados desde la BD: ", datos);
+			//actualizando los datos en la interfaz
+			document.getElementById('temp1-vivo').innerText = parseFloat(datos.temp).toFixed(1);
+			document.getElementById('hum1-vivo').innerText = parseFloat(datos.hum).toFixed(1);
+			document.getElementById('fecha1-vivo').innerText = datos.fecha;
+		}
+	}
+	catch (error){
+		console.error("Error al recuperar los datos: ", error);
+	}
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+	cargarUltimosDatos();
+});
+
+//******************************************************************
+function activarTab(elemento){
+	//para los enlaces solo dentro de <ul>
+	const listaPadre = elemento.closest('.nav-tabs');
+
+	listaPadre.querySelectorAll(".nav-link").forEach(link => {
+		link.classList.remove("active");
+	});
+
+	elemento.classList.add("active");
+}
+
+function contenedorManual(elemento){
+	activarTab(elemento);
+
+	document.getElementById("contenedor_man_auto").innerHTML = `
+		<h5 class="card-title text-center">VENTILADOR</h5>
+		<div class="row">
+			<div class="col-5 text-center">
+				<label class="form-label">OPERACIÓN</label>
+				<br>
+				<button type="button" class="btn btn-success btn-lg me-1 mb-2" onclick="enviarOrdenVent(1);">Activar</button>		
+				<button type="button" class="btn btn-danger btn-lg me-1 mb-2" onclick="enviarOrdenVent(0);">Desactivar</button>		
+			</div>
+			<div class="col-7 text-center">
+				<label for="vel_vent" class="form-label">INTENSIDAD</label>
+				<input type="range" class="form-range" min="0" max="100" value="50" id="vel_vent">
+				<small><output for="vel_vent" id="vel_vent_out" aria-hidden="true">0</output> [%] | </small>
+				<small><output for="vel_vent" id="caudal_vent" aria-hidden="true">0.0</output> [m/s]</small>
+			</div>
+		</div>
+		
+		<hr>
+
+		<div class="row">
+			<div class="col-6 text-center">
+				<h5 class="card-title text-center">CALENTADOR</h5>
+				<label class="form-label">OPERACIÓN</label>
+				<br>
+				<button type="button" class="btn btn-success btn-lg me-1 mb-2" onclick="enviarOrdenCalent(1);">Activar</button>		
+				<button type="button" class="btn btn-danger btn-lg me-1 mb-2" onclick="enviarOrdenCalent(0);">Desactivar</button>		
+			</div>
+			<div class="col-6 text-center">
+				<h5 class="card-title text-center">HUMIDIFICADOR</h5>
+				<label class="form-label">OPERACIÓN</label>
+				<br>
+				<button type="button" class="btn btn-success btn-lg me-1 mb-2" onclick="enviarOrdenHumi(1);">Activar</button>		
+				<button type="button" class="btn btn-danger btn-lg me-1 mb-2" onclick="enviarOrdenHumi(0);">Desactivar</button>		
+			</div>
+		</div>
+	`;
+//escuchando el evento del deslizador
+rangoIn.addEventListener('input', function() {
+	valoresVent(this.value);
+});
+
+//ejecutar hacer el cambio de pestagnas
+valoresVent(rangoIn.value);
+}
+
+function contenedorAutomatico(elemento){
+	activarTab(elemento);
+
+	document.getElementById("contenedor_man_auto").innerHTML = `
+		<h5 class="card-title text-center">CONTROL AUTOMÁTICO</h5>
+		<form action="">
+			<div class="row">
+				<div class="col-3 text-center">
+					<br>
+					<label class="form-label fs-5" for="valor_temp1">Temperatura</label>
+					<input name="valor_temp1" id="valor_temp1" class="form-control form-control-lg" min="10" max="50" step="1" type="number" value="24">
+				</div>
+				<div class="col-9 text-center">
+					<br>
+					<label for="valor_temp1_range" class="form-label fs-5">Temperatura</label>
+					<input type="range" class="form-range" min="10" max="50" value="24" id="valor_temp1_range">
+					<small class="fs-5"><output for="valor_temp1_range" id="valor_temp1_range_out" aria-hidden="true">24</output> [°C] </small>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-3 text-center">
+					<br>
+					<label class="form-label fs-5" for="valor_hum1">Humedad</label>
+					<input name="valor_hum1" id="valor_hum1" class="form-control form-control-lg" min="5" max="100" step="1" type="number" value="60">
+				</div>
+				<div class="col-9 text-center">
+					<br>
+					<label for="valor_hum1_range" class="form-label fs-5">Humedad</label>
+					<input type="range" class="form-range" min="5" max="100" value="60" id="valor_hum1_range">
+					<small class="fs-5"><output for="valor_hum1_range" id="valor_hum1_range_out" aria-hidden="true">60</output> [%] </small>
+				</div>
+			</div>
+			<div class="text-center mt-5">
+				<button type="button" class="btn btn-success btn-lg me-1" onclick="enviarConfiguracion();">Iniciar</button>
+				<button type="button" class="btn btn-danger btn-lg" onclick="enviarComandoParar();">Detener</button>
+			</div>
+		</form>
+	`;
+	inicializarControles();
+}
+
+</script>
+
+	<script>
+    // Función para sincronizar valores
+    function sincronizarValores(inputId, rangeId, outputId) {
+        const input = document.getElementById(inputId);
+        const range = document.getElementById(rangeId);
+        const output = document.getElementById(outputId);
+
+        // Cuando cambia el input numérico, actualiza el range y el output
+        input.addEventListener('input', function() {
+            range.value = this.value;
+            output.textContent = this.value;
+        });
+
+        // Cuando cambia el range, actualiza el input y el output
+        range.addEventListener('input', function() {
+            input.value = this.value;
+            output.textContent = this.value;
+        });
+    }
+
+	function inicializarControles() {
+		sincronizarValores('valor_temp1', 'valor_temp1_range', 'valor_temp1_range_out');
+		sincronizarValores('valor_hum1', 'valor_hum1_range', 'valor_hum1_range_out');
+	}
+
+	// Función para enviar configuración de temperatura y humedad
+function enviarConfiguracion() {
+    // Obtener los valores de los inputs
+    const temperatura = document.getElementById('valor_temp1').value;
+    const humedad = document.getElementById('valor_hum1').value;
+
+    // Validar que los valores existan
+    if (!temperatura || !humedad) {
+        console.log("Error: Faltan valores de temperatura o humedad");
+        alert("Por favor ingrese valores de temperatura y humedad");
+        return;
+    }
+
+    // Crear el payload
+    const payload = {
+        id_objetivo: DEVICE_ID,
+        action: "comando",
+        tipo: "automatico",
+        temp: parseInt(temperatura),
+        hum: parseInt(humedad)
+    };
+
+    // Verificar que el servidor esté conectado
+    if (websocket.readyState === WebSocket.OPEN) {
+        const mensaje = JSON.stringify(payload);
+        websocket.send(mensaje);
+        console.log("Configuración enviada: ", mensaje);
+    } else {
+        console.log("El servidor no está conectado");
+        alert("Error: No hay conexión con el servidor");
+    }
+}
+
+// Función para parar
+function enviarComandoParar() {
+    const payload = {
+        id_objetivo: DEVICE_ID,
+        action: "comando",
+        tipo: "detener_todo"
+    };
+    
+    if (websocket.readyState === WebSocket.OPEN) {
+        const mensaje = JSON.stringify(payload);
+        websocket.send(mensaje);
+        console.log("Comando de parada enviado: ", mensaje);
+    } else {
+        console.log("El servidor no está conectado");
+    }
+}
+
+</script>
+
+
 
 {% endblock %}
