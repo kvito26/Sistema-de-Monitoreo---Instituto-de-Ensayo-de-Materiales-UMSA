@@ -1,7 +1,7 @@
 <?php
 //codigo para implementar el servidor websocket
 require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../config/bootstrap.php';
 
 use Swoole\WebSocket\Server;
 use Swoole\WebSocket\Frame;
@@ -32,8 +32,23 @@ $clientesWeb->create();
 $server = new Server("0.0.0.0", 8080, SWOOLE_PROCESS);
 $controller = new WSocketController();
 
+//======================================================================================
+//CODIGO TEMPORAL URGENTE
+/////direccion de los archivos json 
+///$rutas_json = [
+///	"json_automatico1" => __DIR__ . '/../json/config_auto1.json',
+///];
+///
+/////funcion para escribir los archivos json
+///function escribirJson(string $ruta, string $id_disp, array $datos){
+///	$datos_json = json_encode($datos);
+///	file_put_contents($ruta, $datos_json);
+///}
+
+//======================================================================================
 //**************************************************************************************
-//funciones auxiliares
+//FUNCIONES AUXILIARES
+//funcion para los logs en la impresion de pantalla
 function mensajesLog(string $nivel, string $mensaje, array $contexto = []): void{
 	$timestamp = date('Y-m-d H:i:s');
 
@@ -460,6 +475,18 @@ $server->on("message", function (Server $server, Frame $frame) use ($dispAutenti
 							'temp' => $datos_recibidos['temp'],
 							'hum' => $datos_recibidos['hum'],
 						]);	
+
+				//		//para guardarlo en un archivo json
+				//		$config_auto = [
+				//			'tipo' => $datos_recibidos['tipo'],
+				//			'temp' => $datos_recibidos['temp'],
+				//			'hum' => $datos_recibidos['hum'],
+				//			'dispositivo' => $datos_recibidos['id_objetivo'],
+				//			'activo' => (bool) true,
+				//		];
+
+				//		escribirJson($rutas_json["json_automatico1"], $config_auto['dispositivo'], $config_auto);
+						
 					}
 					catch(\Exception $e){
 						mensajesLog('ERROR', "No se ha podido enviar el comando", ['error_comando' => [
@@ -596,6 +623,8 @@ $server->on('Close', function ($server, $fd) use ($dispAutenticados, $clientesWe
 					'id_disp' => (string) $id_disp,
 					'timestamp' => date('d/m H:i:s'),
 				]);
+
+
 
 			}
 			catch(\Exception $e){

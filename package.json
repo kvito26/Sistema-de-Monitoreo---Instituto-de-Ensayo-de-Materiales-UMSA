@@ -1,0 +1,33 @@
+{
+  "name": "umsa-iem",
+  "version": "1.0.0",
+  "description": "sistema de monitoreo para el instituto de materiales de ing civil de la UMSA",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kvito26/Sistema-de-Monitoreo---Instituto-de-Ensayo-de-Materiales-UMSA.git"
+  },
+  "keywords": [
+    "iem",
+    "umsa",
+    "monitoreo",
+    "temperatura",
+    "humedad",
+    "ventilador",
+    "calentador",
+    "resistencia",
+    "humidificador"
+  ],
+  "author": "Kevin Vito",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kvito26/Sistema-de-Monitoreo---Instituto-de-Ensayo-de-Materiales-UMSA/issues"
+  },
+  "homepage": "https://github.com/kvito26/Sistema-de-Monitoreo---Instituto-de-Ensayo-de-Materiales-UMSA#readme",
+  "devDependencies": {
+    "vite": "^7.3.1"
+  }
+}

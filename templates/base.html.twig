@@ -4,11 +4,11 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>{% block title %}{% endblock %}</title>
-	<link rel="icon" type="image/x-icon" href="/umsa-iem/public/images/logo_iem.png">
+	<link rel="icon" type="image/x-icon" href="/images/logo_iem.png">
 	<!-- Agregando el soporte para el framework de css Bootstrap -->
-	<link rel="stylesheet" href="/umsa-iem/public/css/bootstrap-5.3.8-dist/css/bootstrap.min.css">
-	<link rel="stylesheet" href="/umsa-iem/public/css/bootstrap-icons-1.13.1/bootstrap-icons.css">
-	<script defer src="/umsa-iem/public/css/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+	<link rel="stylesheet" href="/css/bootstrap-5.3.8-dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/css/bootstrap-icons-1.13.1/bootstrap-icons.css">
+	<script defer src="/css/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
 	<style>
   .bg-orange {
     background-color: var(--bs-orange) !important;
@@ -20,9 +20,9 @@
 	<!-- El nav bar de la pagina web -->
 	<nav class="navbar navbar-expand-md fixed-top shadow-sm" style="background-color: #005b92;">
 		<div class="container-fluid">
-			<!-- 			<a class="navbar-brand text-white" href="/umsa-iem/public/?action=ambientes"><b>IEM-UMSA</b></a>  -->
-			<a class="navbar-brand" href="/umsa-iem/public/?action=ambientes">
-			<img src="/umsa-iem/public/images/logo_iem.png" alt="logo-iem" style="width: 60px; height: auto;">
+			<!-- 			<a class="navbar-brand text-white" href="/?action=ambientes"><b>IEM-UMSA</b></a>  -->
+			<a class="navbar-brand" href="/?action=ambientes">
+			<img src="/images/logo_iem.png" alt="logo-iem" style="width: 60px; height: auto;">
 			</a>
 			{#	{% if isLoggedIn() %} #}
 			 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,43 +32,43 @@
 			<div class="collapse navbar-collapse mx-auto" id="navbarNavAltMarkup">
 				<ul class="navbar-nav mx-auto text-center">
 					<li class="nav-item">
-						<a class="nav-link opacity-100 {% block ambiente1 %}{% endblock %}" href="/umsa-iem/public/?action=ambiente1">AMBIENTE 1</a>
+						<a class="nav-link opacity-100 {% block ambiente1 %}{% endblock %}" href="/?action=ambiente1">AMBIENTE 1</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link opacity-100 {% block ambiente2 %}{% endblock %}" href="/umsa-iem/public/?action=ambiente2">AMBIENTE 2</a>
+						<a class="nav-link opacity-100 {% block ambiente2 %}{% endblock %}" href="/?action=ambiente2">AMBIENTE 2</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link opacity-100 {% block ambiente3 %}{% endblock %}" href="/umsa-iem/public/?action=ambiente3">AMBIENTE 3</a>
+						<a class="nav-link opacity-100 {% block ambiente3 %}{% endblock %}" href="/?action=ambiente3">AMBIENTE 3</a>
 					</li>
 					<!-- 
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle opacity-100 {% block ambientesLink %}{% endblock %}" href="#" data-bs-toggle="dropdown" aria-expanded="false">Ambientes</a>
 							<ul class="dropdown-menu">
-								<li><a class="dropdown-item" href="/umsa-iem/public/?action=ambiente1">Ambiente 1</a></li>
-								<li><a class="dropdown-item" href="/umsa-iem/public/?action=ambiente2">Ambiente 2</a></li>
-								<li><a class="dropdown-item" href="/umsa-iem/public/?action=ambiente3">Ambiente 3</a></li>
+								<li><a class="dropdown-item" href="/?action=ambiente1">Ambiente 1</a></li>
+								<li><a class="dropdown-item" href="/?action=ambiente2">Ambiente 2</a></li>
+								<li><a class="dropdown-item" href="/?action=ambiente3">Ambiente 3</a></li>
 								<li><hr class="dropdown-divider"></li>
-								<li><a class="dropdown-item" href="/umsa-iem/public/?action=ambientes">Ambientes</a></li>
+								<li><a class="dropdown-item" href="/?action=ambientes">Ambientes</a></li>
 							</ul>
 					</li>
 					-->
-
+						
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle opacity-100 {% block reportesLink %}{% endblock %}" href="#" data-bs-toggle="dropdown" aria-expanded="false">Reportes</a>
 							<ul class="dropdown-menu">
-								<li><a class="dropdown-item" href="/umsa-iem/public/?action=reportes_amb1">Reportes Amb-1</a></li>
-								<li><a class="dropdown-item" href="/umsa-iem/public/?action=reportes_amb2">Reportes Amb-2</a></li>
-								<li><a class="dropdown-item" href="/umsa-iem/public/?action=reportes_amb3">Reportes Amb-3</a></li>
+								<li><a class="dropdown-item" href="/?action=reportes_amb1">Reportes Amb-1</a></li>
+								<li><a class="dropdown-item" href="/?action=reportes_amb2">Reportes Amb-2</a></li>
+								<li><a class="dropdown-item" href="/?action=reportes_amb3">Reportes Amb-3</a></li>
 							</ul>
 					</li>
-
+					
 					<!-- 
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle opacity-100 {% block usuariosLink %}{% endblock %}" href="#" data-bs-toggle="dropdown" aria-expanded="false">Usuarios</a>
 							<ul class="dropdown-menu">
-								<li><a class="dropdown-item {% block gestionUserLink %}{% endblock %}" href="/umsa-iem/public/?action=gestion_usuarios">Gestión de Usuarios</a></li>
+								<li><a class="dropdown-item {% block gestionUserLink %}{% endblock %}" href="/?action=gestion_usuarios">Gestión de Usuarios</a></li>
 								<li><hr class="dropdown-divider"></li>
-								<li><a class="dropdown-item {% block registrarLink %}{% endblock %}" href="/umsa-iem/public/?action=registrar">Registrar Usuario</a></li>
+								<li><a class="dropdown-item {% block registrarLink %}{% endblock %}" href="/?action=registrar">Registrar Usuario</a></li>
 							</ul>
 					</li>
 					-->
@@ -77,14 +77,14 @@
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle opacity-100 {% block dispositivosLink %}{% endblock %}" href="#" data-bs-toggle="dropdown" aria-expanded="false">Dispositivos</a>
 							<ul class="dropdown-menu">
-								<li><a class="dropdown-item" href="/umsa-iem/public/?action=gestion_dispositivos">Gestión de Dispositivos</a></li>
+								<li><a class="dropdown-item" href="/?action=gestion_dispositivos">Gestión de Dispositivos</a></li>
 								<li><hr class="dropdown-divider"></li>
-								<li><a class="dropdown-item" href="/umsa-iem/public/?action=registro_dispositivo">Agregar Dispositivo</a></li>
+								<li><a class="dropdown-item" href="/?action=registro_dispositivo">Agregar Dispositivo</a></li>
 							</ul>
 					</li>
 					-->
 					<li class="nav-item">
-						<a class="nav-link opacity-100 {% block acerca_de %}{% endblock %}" href="/umsa-iem/public/?action=acerca_de">Acerca de</a>
+						<a class="nav-link opacity-100 {% block acerca_de %}{% endblock %}" href="/?action=acerca_de">Acerca de</a>
 					</li>
 				</ul>
 				{# {% endif %} #}
@@ -104,7 +104,7 @@
 					<!-- 
 					<div class="vr my-auto" style="height: 35px;"></div>
 					<div class="p-2">
-						<a class="btn btn-outline-warning" href="/umsa-iem/public/?action=logout">Salir</a>
+						<a class="btn btn-outline-warning" href="/?action=logout">Salir</a>
 					</div>
 					-->
 					{# {% endif %} #}

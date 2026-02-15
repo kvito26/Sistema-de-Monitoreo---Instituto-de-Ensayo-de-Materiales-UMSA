@@ -57,8 +57,8 @@
 						</table>
 
 						<div class="text-center">
-							<a class="btn btn-primary {% block ambiente1Link %}{% endblock %}" href="/umsa-iem/public/?action=ambiente1" role="button">Detalles</a>
-							<a class="btn btn-danger px-5" href="#" role="button">Parar</a>
+							<a class="btn btn-primary {% block ambiente1Link %}{% endblock %}" href="?action=ambiente1" role="button">Detalles</a>
+							<a class="btn btn-danger px-5" role="button" onclick="enviarComandoParar1()">Parar</a>
 						</div>
 
 					</div>
@@ -116,8 +116,8 @@
 						</table>
 
 						<div class="text-center">
-							<a class="btn btn-primary {% block ambiente2Link %}{% endblock %}" href="/umsa-iem/public/?action=ambiente2" role="button">Detalles</a>
-							<a class="btn btn-danger px-5" href="#" role="button">Parar</a>
+							<a class="btn btn-primary {% block ambiente2Link %}{% endblock %}" href="?action=ambiente2" role="button">Detalles</a>
+							<a class="btn btn-danger px-5" role="button" onclick="enviarComandoParar2();">Parar</a>
 						</div>
 					</div>
 				</div>
@@ -174,7 +174,7 @@
 						</table>
 
 						<div class="text-center">
-							<a class="btn btn-primary {% block ambiente3Link %}{% endblock %}" href="/umsa-iem/public/?action=ambiente3" role="button">Detalles</a>
+							<a class="btn btn-primary {% block ambiente3Link %}{% endblock %}" href="?action=ambiente3" role="button">Detalles</a>
 							<a class="btn btn-danger px-5" href="#" role="button">Parar</a>
 						</div>
 					</div>
@@ -225,7 +225,7 @@ const DEVICE_ID_2 = 'esp_amb2';
 
 //conectando al websocket
 //const wsServer = 'ws://10.210.74.12:8080';
-const wsServer = 'ws://192.168.10.6:8080';
+const wsServer = 'ws://192.168.1.6:8080';
 let websocket = null;
 let intervalo_reconex = 5000; //reconexion cada 5 seg
 let contador_reconex = 0;
@@ -551,15 +551,15 @@ conectarWS();
 //***********************************************************************
 
 //RECUPERAR ULTIMOS DATOS DE TEMPERATURA Y HUMEDAD
-//funcion para obtener el ultimo desde la base de datos
-async function cargarUltimosDatos(){
+//funcion para obtener el ultimo dato amb1
+async function cargarUltimosDatos1(){
 	//se buscan los ultimos datos de temperatura, humedad y fecha
 	try{
 		const response = await fetch(`?action=consulta_datos&id_disp=${DEVICE_ID_1}`);
 		const datos = await response.json();
 
 		if (datos.estado === 'datos_recuperados'){
-			console.log("Datos recuperados de la BD: ", datos);
+			console.log("Datos 1 recuperados de la BD: ", datos);
 			//actualizando los datos en la interfaz
 			temp1.innerText = parseFloat(datos.temp).toFixed(1);
 			hum1.innerText = parseFloat(datos.hum).toFixed(1);
@@ -571,12 +571,62 @@ async function cargarUltimosDatos(){
 	}
 }
 
+//funcion para obtener el ultimo dato amb2
+async function cargarUltimosDatos2(){
+	//se buscan los ultimos datos de temperatura, humedad y fecha
+	try{
+		const response = await fetch(`?action=consulta_datos&id_disp=${DEVICE_ID_2}`);
+		const datos = await response.json();
+
+		if (datos.estado === 'datos_recuperados'){
+			console.log("Datos 2 recuperados de la BD: ", datos);
+			//actualizando los datos en la interfaz
+			temp2.innerText = parseFloat(datos.temp).toFixed(1);
+			hum2.innerText = parseFloat(datos.hum).toFixed(1);
+			fecha2.innerText = datos.fecha;
+		}
+	}
+	catch (error){
+		console.error("Error al recuperar los datos: ", error);
+	}
+}
 document.addEventListener("DOMContentLoaded", function() {
-	cargarUltimosDatos();
+	cargarUltimosDatos1();
+	cargarUltimosDatos2();
 });
 
+// Función para parar
+function enviarComandoParar1() {
+    const payload = {
+        id_objetivo: DEVICE_ID_1,
+        action: "comando",
+        tipo: "detener_todo"
+    };
 
+    if (websocket.readyState === WebSocket.OPEN) {
+        const mensaje = JSON.stringify(payload);
+        websocket.send(mensaje);
+        console.log("Comando de parada enviado: ", mensaje);
+    } else {
+        console.log("El servidor no está conectado");
+    }
+}
 
+function enviarComandoParar2() {
+    const payload = {
+        id_objetivo: DEVICE_ID_2,
+        action: "comando",
+        tipo: "detener_todo"
+    };
+
+    if (websocket.readyState === WebSocket.OPEN) {
+        const mensaje = JSON.stringify(payload);
+        websocket.send(mensaje);
+        console.log("Comando de parada enviado: ", mensaje);
+    } else {
+        console.log("El servidor no está conectado");
+    }
+}
 
 
 

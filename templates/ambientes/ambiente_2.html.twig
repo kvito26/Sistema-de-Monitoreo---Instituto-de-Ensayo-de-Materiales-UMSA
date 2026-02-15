@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Ambiente 2{% endblock %}
+{% block title %}Ambientes{% endblock %}
 {% block ambiente2 %}active{% endblock %}
 
 {% block body %}
@@ -79,14 +79,49 @@
 			  <div class="card-header">
 				<ul class="nav nav-tabs card-header-tabs">
 				  <li class="nav-item">
-					<a class="nav-link active" aria-current="true" role="button" id="tab_man" onclick="contenedorManual(this);">CONTROL MANUAL</a>
+					<a class="nav-link active" aria-current="true" role="button" id="tab_auto" onclick="contenedorAutomatico(this);">CONTROL AUTOMÁTICO</a>
 				  </li>
 				  <li class="nav-item">
-					<a class="nav-link" aria-current="true" role="button" id="tab_auto" onclick="contenedorAutomatico(this);">CONTROL AUTOMÁTICO</a>
+					<a class="nav-link" aria-current="true" role="button" id="tab_man" onclick="contenedorManual(this);">CONTROL MANUAL</a>
 				  </li>
 				</ul>
 			  </div>
 			  <div class="card-body" id="contenedor_man_auto">
+				<h5 class="card-title text-center">CONTROL AUTOMÁTICO</h5>
+				<form action="">
+					<div class="row">
+						<div class="col-3 text-center">
+							<br>
+							<label class="form-label fs-5" for="valor_temp1">Temperatura</label>
+							<input name="valor_temp1" id="valor_temp1" class="form-control form-control-lg" min="10" max="50" step="1" type="number" value="24">
+						</div>
+						<div class="col-9 text-center">
+							<br>
+							<label for="valor_temp1_range" class="form-label fs-5">Temperatura</label>
+							<input type="range" class="form-range" min="10" max="50" value="24" id="valor_temp1_range">
+							<small class="fs-5"><output for="valor_temp1_range" id="valor_temp1_range_out" aria-hidden="true">24</output> [°C] </small>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-3 text-center">
+							<br>
+							<label class="form-label fs-5" for="valor_hum1">Humedad</label>
+							<input name="valor_hum1" id="valor_hum1" class="form-control form-control-lg" min="5" max="100" step="1" type="number" value="60">
+						</div>
+						<div class="col-9 text-center">
+							<br>
+							<label for="valor_hum1_range" class="form-label fs-5">Humedad</label>
+							<input type="range" class="form-range" min="5" max="100" value="60" id="valor_hum1_range">
+							<small class="fs-5"><output for="valor_hum1_range" id="valor_hum1_range_out" aria-hidden="true">60</output> [%] </small>
+						</div>
+					</div>
+					<div class="text-center mt-5">
+						<button id="botonIniciarAuto" type="button" class="btn btn-success btn-lg me-1" onclick="enviarConfiguracion();">Iniciar</button>
+						<button id="botonPararAuto" type="button" class="btn btn-danger btn-lg" onclick="enviarComandoParar();">Detener</button>
+					</div>
+				</form>
+				  <!-- -->
+				  <!--
 					<h5 class="card-title text-center">VENTILADOR</h5>
 					<div class="row">
 						<div class="col-5 text-center mt-4">
@@ -123,6 +158,7 @@
 							<button id="botonOffHumi" type="button" class="btn btn-danger btn-lg me-1 mb-2" onclick="enviarOrdenHumi(0);">Desactivar</button>		
 						</div>
 					</div>
+					-->
 
 			  </div>
 			</div>
@@ -136,13 +172,12 @@
 	</div>
 
 <script>
-
 //*************************************************************
 const DEVICE_ID = 'esp_amb2';
 
 //conectando al websocket
-//const wsServer = 'ws://10.245.59.12:8080';
-const wsServer = 'ws://192.168.10.4:8080';
+const wsServer = 'ws://10.210.74.12:8080';
+//const wsServer = 'ws://192.168.10.6:8080';
 let websocket = null;
 let intervalo_reconex = 5000; //intentando reconectar cada 5s
 let contador_reconex = 0;
@@ -160,23 +195,49 @@ const valorHum1 = document.getElementById('hum1-vivo');
 const valorFecha1 = document.getElementById('fecha1-vivo');
 const estadoMonitor1 = document.getElementById('ws-status');
 
-
 //para modificar el rango de la velocidad del ventilador
-const rangoIn = document.getElementById('vel_vent');
-const rangoPorcentaje = document.getElementById('vel_vent_out');
-const rangoCaudal = document.getElementById('caudal_vent');
+let rangoIn = null;
+let rangoPorcentaje = null;
+let rangoCaudal = null;
 
-//para botones habilitados y deshabilitados
-const botonOnVent = document.getElementById('botonOnVent');
-const botonOffVent = document.getElementById('botonOffVent');
-const botonOnCalent = document.getElementById('botonOnCalent');
-const botonOffCalent = document.getElementById('botonOffCalent');
-const botonOnHumi = document.getElementById('botonOnHumi');
-const botonOffHumi = document.getElementById('botonOffHumi');
+//para botones habilitados y deshabilitados manuales
+let botonOnVent = null;
+let botonOffVent = null;
+let botonOnCalent = null;
+let botonOffCalent = null;
+let botonOnHumi = null;
+let botonOffHumi = null;
 
+//para el input y rango para el sistema automatico
+let inputTempAuto = document.getElementById('valor_temp1');
+let inputHumAuto = document.getElementById('valor_hum1');
+let rangoTempAuto = document.getElementById('valor_temp1_range');
+let rangoHumAuto = document.getElementById('valor_hum1_range');
+let botonInicioAuto = document.getElementById('botonIniciarAuto');
+let botonParoAuto = document.getElementById('botonPararAuto');
+
+//funcion para deshabilitar las entradas, rangos y botones del sistema automatico
+function apagarBotonesAuto(){
+	if (inputTempAuto) inputTempAuto.disabled = true;
+	if (inputHumAuto) inputHumAuto.disabled = true;
+	if (rangoTempAuto) rangoTempAuto.disabled = true;
+	if (rangoHumAuto) rangoHumAuto.disabled = true;
+	if (botonInicioAuto) botonInicioAuto.disabled = true;
+	if (botonParoAuto) botonParoAuto.disabled = true;
+}
+		
+//funcion para deshabilitar los botones manuales
+function apagarBotonesManual() {
+	if (botonOnVent)  botonOnVent.disabled  = true;
+	if (botonOffVent) botonOffVent.disabled = true;
+	if (rangoIn)      rangoIn.disabled      = true;
+	if (botonOnCalent)  botonOnCalent.disabled  = true;
+	if (botonOffCalent) botonOffCalent.disabled = true;
+	if (botonOnHumi)  botonOnHumi.disabled  = true;
+	if (botonOffHumi) botonOffHumi.disabled = true;
+}
 
 //****************************************
-
 //CONEXION CON EL SERVIDOR WEBSOCKET
 function conectarWS(){
 	if (contador_reconex <= 50){
@@ -192,13 +253,7 @@ function conectarWS(){
 			estadoMonitor1.classList.add('bg-warning');
 			
 			//deshabilitando todos los botones por la desconexion del dispositivo
-			botonOnVent.disabled = true;
-			botonOffVent.disabled = true;
-			rangoIn.disabled = true;
-			botonOnCalent.disabled = true;
-			botonOffCalent.disabled = true;
-			botonOnHumi.disabled = true;
-			botonOffHumi.disabled = true;
+			apagarBotonesManual();
 
 			 //limpiando heartbeat si lo hubiera
 			if (intervaloHeartbeat){
@@ -249,17 +304,17 @@ function conectarWS(){
 						estadoVent.innerText = 'ACTIVADO';
 						estadoVent.classList.remove('bg-danger', 'bg-orange', 'bg-warning');
 						estadoVent.classList.add('bg-success');
-						botonOnVent.disabled = true;
-						botonOffVent.disabled = false;
-						rangoIn.disabled = false;
+						if (botonOnVent) botonOnVent.disabled = true;
+						if (botonOffVent) botonOffVent.disabled = false;
+						if (rangoIn) rangoIn.disabled = false;
 					}
 					else if (datos_atrapados.estado_ahora == 0){
 						estadoVent.innerText = 'DESACTIVADO';
 						estadoVent.classList.remove('bg-success', 'bg-orange', 'bg-warning');
 						estadoVent.classList.add('bg-danger');
-						botonOnVent.disabled = false;
-						botonOffVent.disabled = true;
-						rangoIn.disabled = true;
+						if (botonOnVent) botonOnVent.disabled = false;
+						if (botonOffVent) botonOffVent.disabled = true;
+						if (rangoIn) rangoIn.disabled = true;
 					}
 				}
 				else if (datos_atrapados.action === 'feedbackCalent' && datos_atrapados.id_disp === DEVICE_ID){
@@ -267,15 +322,15 @@ function conectarWS(){
 						estadoCalent.innerText = 'ACTIVADO';
 						estadoCalent.classList.remove('bg-danger', 'bg-orange', 'bg-warning');
 						estadoCalent.classList.add('bg-success');
-						botonOnCalent.disabled = true;
-						botonOffCalent.disabled = false;
+						if (botonOnCalent) botonOnCalent.disabled = true;
+						if (botonOffCalent) botonOffCalent.disabled = false;
 					}
 					else if (datos_atrapados.estado_ahora == 0){
 						estadoCalent.innerText = 'DESACTIVADO';
 						estadoCalent.classList.remove('bg-success', 'bg-orange', 'bg-warning');
 						estadoCalent.classList.add('bg-danger');
-						botonOnCalent.disabled = false;
-						botonOffCalent.disabled = true;
+						if (botonOnCalent) botonOnCalent.disabled = false;
+						if (botonOffCalent) botonOffCalent.disabled = true;
 					}
 				}
 				else if (datos_atrapados.action === 'feedbackHumi' && datos_atrapados.id_disp === DEVICE_ID){
@@ -283,15 +338,15 @@ function conectarWS(){
 						estadoHumi.innerText = 'ACTIVADO';
 						estadoHumi.classList.remove('bg-danger', 'bg-orange', 'bg-warning');
 						estadoHumi.classList.add('bg-success');
-						botonOnHumi.disabled = true;
-						botonOffHumi.disabled = false;
+						if (botonOnHumi) botonOnHumi.disabled = true;
+						if (botonOffHumi) botonOffHumi.disabled = false;
 					}
 					else if (datos_atrapados.estado_ahora == 0){
 						estadoHumi.innerText = 'DESACTIVADO';
 						estadoHumi.classList.remove('bg-success', 'bg-orange', 'bg-warning');
 						estadoHumi.classList.add('bg-danger');
-						botonOnHumi.disabled = false;
-						botonOffHumi.disabled = true;
+						if (botonOnHumi) botonOnHumi.disabled = false;
+						if (botonOffHumi) botonOffHumi.disabled = true;
 					}
 				}
 				else if (datos_atrapados.action === 'feedbackNivel' && datos_atrapados.id_disp === DEVICE_ID){
@@ -313,13 +368,7 @@ function conectarWS(){
 					estadoMonitor1.classList.add('bg-warning');
 
 					//deshabilitando todos los botones por la desconexion del dispositivo
-					botonOnVent.disabled = true;
-					botonOffVent.disabled = true;
-					rangoIn.disabled = true;
-					botonOnCalent.disabled = true;
-					botonOffCalent.disabled = true;
-					botonOnHumi.disabled = true;
-					botonOffHumi.disabled = true;
+					apagarBotonesManual();
 
 					//para el span del ventilador
 					estadoVent.innerText = 'SIN DATOS';
@@ -348,7 +397,6 @@ function conectarWS(){
 
 		}
 
-
 		//CERRAR
 		websocket.onclose = function (event) {
 			//limpiando heartbeat para la desconexion
@@ -362,14 +410,8 @@ function conectarWS(){
 			estadoMonitor1.classList.add('bg-danger');
 
 			//deshabilitando todos los botones por la desconexion del dispositivo
-			botonOnVent.disabled = true;
-			botonOffVent.disabled = true;
-			rangoIn.disabled = true;
-			botonOnCalent.disabled = true;
-			botonOffCalent.disabled = true;
-			botonOnHumi.disabled = true;
-			botonOffHumi.disabled = true;
-			
+			apagarBotonesManual();
+
 			//para el span del ventilador
 			estadoVent.innerText = 'SIN DATOS';
 			estadoVent.classList.remove('bg-success', 'bg-warning', 'bg-danger');
@@ -542,13 +584,13 @@ function valoresVent(valor){
 	}
 }
 
-//escuchando el evento del deslizador
-rangoIn.addEventListener('input', function() {
-	valoresVent(this.value);
-});
-
-//ejecutar al inciar la pagina
-valoresVent(rangoIn.value);
+////escuchando el evento del deslizador
+//rangoIn.addEventListener('input', function() {
+//	valoresVent(this.value);
+//});
+//
+////ejecutar el modo manual al inciar la pagina
+//valoresVent(rangoIn.value);
 
 //***************************************************************************
 //RECUPERAR ULTIMOS VALORES DE TEMPERATURA Y HUMEDAD DE LA DB
@@ -574,6 +616,9 @@ async function cargarUltimosDatos() {
 
 document.addEventListener("DOMContentLoaded", function() {
 	cargarUltimosDatos();
+	//ejecutar el modo automatico al iniciar la pagina
+	inicializarControles();
+//	apagarBotonesAuto();
 });
 
 //******************************************************************
@@ -594,13 +639,13 @@ function contenedorManual(elemento){
 	document.getElementById("contenedor_man_auto").innerHTML = `
 		<h5 class="card-title text-center">VENTILADOR</h5>
 		<div class="row">
-			<div class="col-5 text-center">
+			<div class="col-5 text-center mt-4">
 				<label class="form-label">OPERACIÓN</label>
 				<br>
-				<button type="button" class="btn btn-success btn-lg me-1 mb-2" onclick="enviarOrdenVent(1);">Activar</button>		
-				<button type="button" class="btn btn-danger btn-lg me-1 mb-2" onclick="enviarOrdenVent(0);">Desactivar</button>		
+				<button id="botonOnVent" type="button" class="btn btn-success btn-lg me-1 mb-2" onclick="enviarOrdenVent(1);">Activar</button>		
+				<button id="botonOffVent" type="button" class="btn btn-danger btn-lg me-1 mb-2" onclick="enviarOrdenVent(0);">Desactivar</button>		
 			</div>
-			<div class="col-7 text-center">
+			<div class="col-7 text-center mt-4">
 				<label for="vel_vent" class="form-label">INTENSIDAD</label>
 				<input type="range" class="form-range" min="0" max="100" value="50" id="vel_vent">
 				<small><output for="vel_vent" id="vel_vent_out" aria-hidden="true">0</output> [%] | </small>
@@ -608,32 +653,52 @@ function contenedorManual(elemento){
 			</div>
 		</div>
 		
+		<br>
 		<hr>
+		<br>
 
 		<div class="row">
 			<div class="col-6 text-center">
-				<h5 class="card-title text-center">CALENTADOR</h5>
+				<h5 class="card-title text-center mb-4">CALENTADOR</h5>
 				<label class="form-label">OPERACIÓN</label>
 				<br>
-				<button type="button" class="btn btn-success btn-lg me-1 mb-2" onclick="enviarOrdenCalent(1);">Activar</button>		
-				<button type="button" class="btn btn-danger btn-lg me-1 mb-2" onclick="enviarOrdenCalent(0);">Desactivar</button>		
+				<button id="botonOnCalent" type="button" class="btn btn-success btn-lg me-1 mb-2" onclick="enviarOrdenCalent(1);">Activar</button>		
+				<button id="botonOffCalent" type="button" class="btn btn-danger btn-lg me-1 mb-2" onclick="enviarOrdenCalent(0);">Desactivar</button>	
 			</div>
 			<div class="col-6 text-center">
-				<h5 class="card-title text-center">HUMIDIFICADOR</h5>
+				<h5 class="card-title text-center mb-4">HUMIDIFICADOR</h5>
 				<label class="form-label">OPERACIÓN</label>
 				<br>
-				<button type="button" class="btn btn-success btn-lg me-1 mb-2" onclick="enviarOrdenHumi(1);">Activar</button>		
-				<button type="button" class="btn btn-danger btn-lg me-1 mb-2" onclick="enviarOrdenHumi(0);">Desactivar</button>		
+				<button id="botonOnHumi" type="button" class="btn btn-success btn-lg me-1 mb-2" onclick="enviarOrdenHumi(1);">Activar</button>		
+				<button id="botonOffHumi" type="button" class="btn btn-danger btn-lg me-1 mb-2" onclick="enviarOrdenHumi(0);">Desactivar</button>		
 			</div>
 		</div>
 	`;
-//escuchando el evento del deslizador
-rangoIn.addEventListener('input', function() {
-	valoresVent(this.value);
-});
 
-//ejecutar hacer el cambio de pestagnas
-valoresVent(rangoIn.value);
+	//para modificar el rango de la velocidad del ventilador
+	rangoIn = document.getElementById('vel_vent');
+	rangoPorcentaje = document.getElementById('vel_vent_out');
+	rangoCaudal = document.getElementById('caudal_vent');
+
+	//para botones habilitados y deshabilitados
+	botonOnVent = document.getElementById('botonOnVent');
+	botonOffVent = document.getElementById('botonOffVent');
+	botonOnCalent = document.getElementById('botonOnCalent');
+	botonOffCalent = document.getElementById('botonOffCalent');
+	botonOnHumi = document.getElementById('botonOnHumi');
+	botonOffHumi = document.getElementById('botonOffHumi');
+
+	if (websocket.readyState !== WebSocket.OPEN){
+		apagarBotonesManual();
+	}
+
+	//escuchando el evento del deslizador
+	rangoIn.addEventListener('input', function() {
+		valoresVent(this.value);
+	});
+
+	//ejecutar hacer el cambio de pestagnas
+	valoresVent(rangoIn.value);
 }
 
 function contenedorAutomatico(elemento){
@@ -669,40 +734,41 @@ function contenedorAutomatico(elemento){
 				</div>
 			</div>
 			<div class="text-center mt-5">
-				<button type="button" class="btn btn-success btn-lg me-1" onclick="enviarConfiguracion();">Iniciar</button>
-				<button type="button" class="btn btn-danger btn-lg" onclick="enviarComandoParar();">Detener</button>
+				<button id="botonIniciarAuto" type="button" class="btn btn-success btn-lg me-1" onclick="enviarConfiguracion();">Iniciar</button>
+				<button id="botonPararAuto" type="button" class="btn btn-danger btn-lg" onclick="enviarComandoParar();">Detener</button>
 			</div>
 		</form>
 	`;
 	inicializarControles();
+
 }
 
 </script>
 
-	<script>
-    // Función para sincronizar valores
-    function sincronizarValores(inputId, rangeId, outputId) {
-        const input = document.getElementById(inputId);
-        const range = document.getElementById(rangeId);
-        const output = document.getElementById(outputId);
+<script>
+// Función para sincronizar valores
+function sincronizarValores(inputId, rangeId, outputId) {
+	const input = document.getElementById(inputId);
+	const range = document.getElementById(rangeId);
+	const output = document.getElementById(outputId);
 
-        // Cuando cambia el input numérico, actualiza el range y el output
-        input.addEventListener('input', function() {
-            range.value = this.value;
-            output.textContent = this.value;
-        });
+	// Cuando cambia el input numérico, actualiza el range y el output
+	input.addEventListener('input', function() {
+		range.value = this.value;
+		output.textContent = this.value;
+	});
 
-        // Cuando cambia el range, actualiza el input y el output
-        range.addEventListener('input', function() {
-            input.value = this.value;
-            output.textContent = this.value;
-        });
-    }
+	// Cuando cambia el range, actualiza el input y el output
+	range.addEventListener('input', function() {
+		input.value = this.value;
+		output.textContent = this.value;
+	});
+}
 
-	function inicializarControles() {
-		sincronizarValores('valor_temp1', 'valor_temp1_range', 'valor_temp1_range_out');
-		sincronizarValores('valor_hum1', 'valor_hum1_range', 'valor_hum1_range_out');
-	}
+function inicializarControles() {
+	sincronizarValores('valor_temp1', 'valor_temp1_range', 'valor_temp1_range_out');
+	sincronizarValores('valor_hum1', 'valor_hum1_range', 'valor_hum1_range_out');
+}
 
 	// Función para enviar configuración de temperatura y humedad
 function enviarConfiguracion() {
@@ -719,7 +785,7 @@ function enviarConfiguracion() {
 
     // Crear el payload
     const payload = {
-        id_objetivo: DEVICE_ID,
+		id_objetivo: DEVICE_ID,
         action: "comando",
         tipo: "automatico",
         temp: parseInt(temperatura),

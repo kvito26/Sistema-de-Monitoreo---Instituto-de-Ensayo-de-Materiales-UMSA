@@ -116,8 +116,8 @@
 						</div>
 					</div>
 					<div class="text-center mt-5">
-						<button type="button" class="btn btn-success btn-lg me-1" onclick="enviarConfiguracion();">Iniciar</button>
-						<button type="button" class="btn btn-danger btn-lg" onclick="enviarComandoParar();">Detener</button>
+						<button id="botonIniciarAuto" type="button" class="btn btn-success btn-lg me-1" onclick="enviarConfiguracion();">Iniciar</button>
+						<button id="botonPararAuto" type="button" class="btn btn-danger btn-lg" onclick="enviarComandoParar();">Detener</button>
 					</div>
 				</form>
 				  <!-- -->
@@ -177,7 +177,7 @@ const DEVICE_ID = 'esp_amb1';
 
 //conectando al websocket
 //const wsServer = 'ws://10.210.74.12:8080';
-const wsServer = 'ws://192.168.10.6:8080';
+const wsServer = 'ws://192.168.1.6:8080';
 let websocket = null;
 let intervalo_reconex = 5000; //intentando reconectar cada 5s
 let contador_reconex = 0;
@@ -200,7 +200,7 @@ let rangoIn = null;
 let rangoPorcentaje = null;
 let rangoCaudal = null;
 
-//para botones habilitados y deshabilitados
+//para botones habilitados y deshabilitados manuales
 let botonOnVent = null;
 let botonOffVent = null;
 let botonOnCalent = null;
@@ -208,6 +208,24 @@ let botonOffCalent = null;
 let botonOnHumi = null;
 let botonOffHumi = null;
 
+//para el input y rango para el sistema automatico
+let inputTempAuto = document.getElementById('valor_temp1');
+let inputHumAuto = document.getElementById('valor_hum1');
+let rangoTempAuto = document.getElementById('valor_temp1_range');
+let rangoHumAuto = document.getElementById('valor_hum1_range');
+let botonInicioAuto = document.getElementById('botonIniciarAuto');
+let botonParoAuto = document.getElementById('botonPararAuto');
+
+//funcion para deshabilitar las entradas, rangos y botones del sistema automatico
+function apagarBotonesAuto(){
+	if (inputTempAuto) inputTempAuto.disabled = true;
+	if (inputHumAuto) inputHumAuto.disabled = true;
+	if (rangoTempAuto) rangoTempAuto.disabled = true;
+	if (rangoHumAuto) rangoHumAuto.disabled = true;
+	if (botonInicioAuto) botonInicioAuto.disabled = true;
+	if (botonParoAuto) botonParoAuto.disabled = true;
+}
+		
 //funcion para deshabilitar los botones manuales
 function apagarBotonesManual() {
 	if (botonOnVent)  botonOnVent.disabled  = true;
@@ -286,17 +304,17 @@ function conectarWS(){
 						estadoVent.innerText = 'ACTIVADO';
 						estadoVent.classList.remove('bg-danger', 'bg-orange', 'bg-warning');
 						estadoVent.classList.add('bg-success');
-						botonOnVent.disabled = true;
-						botonOffVent.disabled = false;
-						rangoIn.disabled = false;
+						if (botonOnVent) botonOnVent.disabled = true;
+						if (botonOffVent) botonOffVent.disabled = false;
+						if (rangoIn) rangoIn.disabled = false;
 					}
 					else if (datos_atrapados.estado_ahora == 0){
 						estadoVent.innerText = 'DESACTIVADO';
 						estadoVent.classList.remove('bg-success', 'bg-orange', 'bg-warning');
 						estadoVent.classList.add('bg-danger');
-						botonOnVent.disabled = false;
-						botonOffVent.disabled = true;
-						rangoIn.disabled = true;
+						if (botonOnVent) botonOnVent.disabled = false;
+						if (botonOffVent) botonOffVent.disabled = true;
+						if (rangoIn) rangoIn.disabled = true;
 					}
 				}
 				else if (datos_atrapados.action === 'feedbackCalent' && datos_atrapados.id_disp === DEVICE_ID){
@@ -304,15 +322,15 @@ function conectarWS(){
 						estadoCalent.innerText = 'ACTIVADO';
 						estadoCalent.classList.remove('bg-danger', 'bg-orange', 'bg-warning');
 						estadoCalent.classList.add('bg-success');
-						botonOnCalent.disabled = true;
-						botonOffCalent.disabled = false;
+						if (botonOnCalent) botonOnCalent.disabled = true;
+						if (botonOffCalent) botonOffCalent.disabled = false;
 					}
 					else if (datos_atrapados.estado_ahora == 0){
 						estadoCalent.innerText = 'DESACTIVADO';
 						estadoCalent.classList.remove('bg-success', 'bg-orange', 'bg-warning');
 						estadoCalent.classList.add('bg-danger');
-						botonOnCalent.disabled = false;
-						botonOffCalent.disabled = true;
+						if (botonOnCalent) botonOnCalent.disabled = false;
+						if (botonOffCalent) botonOffCalent.disabled = true;
 					}
 				}
 				else if (datos_atrapados.action === 'feedbackHumi' && datos_atrapados.id_disp === DEVICE_ID){
@@ -320,15 +338,15 @@ function conectarWS(){
 						estadoHumi.innerText = 'ACTIVADO';
 						estadoHumi.classList.remove('bg-danger', 'bg-orange', 'bg-warning');
 						estadoHumi.classList.add('bg-success');
-						botonOnHumi.disabled = true;
-						botonOffHumi.disabled = false;
+						if (botonOnHumi) botonOnHumi.disabled = true;
+						if (botonOffHumi) botonOffHumi.disabled = false;
 					}
 					else if (datos_atrapados.estado_ahora == 0){
 						estadoHumi.innerText = 'DESACTIVADO';
 						estadoHumi.classList.remove('bg-success', 'bg-orange', 'bg-warning');
 						estadoHumi.classList.add('bg-danger');
-						botonOnHumi.disabled = false;
-						botonOffHumi.disabled = true;
+						if (botonOnHumi) botonOnHumi.disabled = false;
+						if (botonOffHumi) botonOffHumi.disabled = true;
 					}
 				}
 				else if (datos_atrapados.action === 'feedbackNivel' && datos_atrapados.id_disp === DEVICE_ID){
@@ -378,7 +396,6 @@ function conectarWS(){
 			}
 
 		}
-
 
 		//CERRAR
 		websocket.onclose = function (event) {
@@ -601,6 +618,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	cargarUltimosDatos();
 	//ejecutar el modo automatico al iniciar la pagina
 	inicializarControles();
+//	apagarBotonesAuto();
 });
 
 //******************************************************************
@@ -670,6 +688,10 @@ function contenedorManual(elemento){
 	botonOnHumi = document.getElementById('botonOnHumi');
 	botonOffHumi = document.getElementById('botonOffHumi');
 
+	if (websocket.readyState !== WebSocket.OPEN){
+		apagarBotonesManual();
+	}
+
 	//escuchando el evento del deslizador
 	rangoIn.addEventListener('input', function() {
 		valoresVent(this.value);
@@ -712,13 +734,13 @@ function contenedorAutomatico(elemento){
 				</div>
 			</div>
 			<div class="text-center mt-5">
-				<button type="button" class="btn btn-success btn-lg me-1" onclick="enviarConfiguracion();">Iniciar</button>
-				<button type="button" class="btn btn-danger btn-lg" onclick="enviarComandoParar();">Detener</button>
+				<button id="botonIniciarAuto" type="button" class="btn btn-success btn-lg me-1" onclick="enviarConfiguracion();">Iniciar</button>
+				<button id="botonPararAuto" type="button" class="btn btn-danger btn-lg" onclick="enviarComandoParar();">Detener</button>
 			</div>
 		</form>
 	`;
-
 	inicializarControles();
+
 }
 
 </script>
@@ -763,7 +785,7 @@ function enviarConfiguracion() {
 
     // Crear el payload
     const payload = {
-        id_objetivo: DEVICE_ID,
+		id_objetivo: DEVICE_ID,
         action: "comando",
         tipo: "automatico",
         temp: parseInt(temperatura),
