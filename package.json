@@ -4,7 +4,7 @@
   "description": "sistema de monitoreo para el instituto de materiales de ing civil de la UMSA",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+	  "build": "vite build"
   },
   "repository": {
     "type": "git",

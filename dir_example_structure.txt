@@ -1,0 +1,83 @@
+umsa-iem/
+│
+├── assets/                        ← JS/CSS fuente (sin procesar)
+│   ├── js/
+│   │   ├── app.js                 ← punto de entrada global
+│   │   ├── websocket/
+│   │   │   └── WSocketClient.js   ← lógica WS reutilizable
+│   │   └── pages/
+│   │       ├── ambiente.js        ← JS específico de cada vista
+│   │       └── reportes.js
+│   └── css/
+│       └── app.css
+│
+├── bin/
+│   ├── doctrine                   ← CLI de Doctrine (ya existe)
+│   └── server.php                 ← un solo punto de entrada para servidores
+│
+├── config/                        ← NUEVO: configuración centralizada
+│   ├── database.php               ← parámetros de DB (lee del .env)
+│   ├── twig.php                   ← configuración de Twig
+│   └── routes.php                 ← tabla de rutas
+│
+├── public/
+│   ├── index.php                  ← front controller (ya existe)
+│   ├── build/                     ← NUEVO: JS/CSS ya compilados (gitignoreado)
+│   │   ├── app.js
+│   │   └── app.css
+│   ├── css/                       ← librerías externas que no se compilan
+│   │   ├── bootstrap-5.3.x/
+│   │   └── bootstrap-icons/
+│   └── images/
+│
+├── src/
+│   ├── Controller/
+│   │   ├── Controller.php         ← base
+│   │   ├── DefaultController.php
+│   │   ├── AmbienteController.php
+│   │   └── DispositivoController.php
+│   ├── Entity/                    ← renombrar desde Ambiente/, Dispositivo/
+│   │   ├── Ambiente.php
+│   │   └── Dispositivo.php
+│   ├── Repository/                ← separado de Entity (como Symfony)
+│   │   ├── AmbienteRepository.php
+│   │   └── DispositivoRepository.php
+│   ├── Service/                   ← NUEVO: lógica de negocio
+│   │   └── AmbienteService.php
+│   ├── WebSocket/
+│   │   ├── SocketController.php
+│   │   └── WSocketController.php
+│   ├── OrmHelper.php
+│   └── Application.php
+│
+├── storage/                       ← NUEVO: archivos JSON de datos
+│   ├── cache/                     ← JSON temporales / caché
+│   │   └── .gitkeep
+│   └── data/                      ← JSON persistentes (config de dispositivos, etc.)
+│       └── .gitkeep
+│
+├── templates/
+│   ├── base.html.twig
+│   ├── ambientes/
+│   │   ├── ambiente_1.html.twig
+│   │   ├── ambiente_2.html.twig
+│   │   └── ambiente_3.html.twig
+│   ├── dispositivos/
+│   │   ├── gestion_dispositivos.html.twig
+│   │   └── registro_dispositivo.html.twig
+│   └── reportes/
+│       ├── reportes_amb1.html.twig
+│       └── reportes_amb2.html.twig
+│
+├── var/                           ← NUEVO: generado en runtime
+│   ├── cache/                     ← caché de Twig compilado, Doctrine, etc.
+│   │   └── .gitkeep
+│   └── log/                       ← logs de la app
+│       └── .gitkeep
+│
+├── vendor/
+├── .env
+├── .gitignore
+├── bootstrap.php
+├── composer.json
+└── composer.lock
