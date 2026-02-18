@@ -1,5 +1,4 @@
 # Sistema de Monitoreo y Control de Temperatura y Humedad para el Instituto de Ensayo de Materiales de Ingeniería Civil de la Universidad Mayor de San Andrés
----
 ## Elección del Equipo
 Para la implementación del servidor Web y WebSocket, se obtuvo la tablet - pc HP ElitePad 1000 G2, con un procesador Intel Atom de cuatro núcleos, 4 GB de memoria RAM y 128 GB de almacenamiento interno.
 <img src="readme_images/equipo_frontal.png" alt="Equipo vista frontal" height="400">
@@ -35,11 +34,13 @@ En este caso se hará el particionado del disco de manera manual, el cual nos da
 5. Definir la Región
     <img src="readme_images/install10.png" alt="Instalación Región" height="500">
 6. Nombre, Nombre de Usuario, Nombre del Equipo y Contraseña.
+
     - **Nombre:** Iem
     - **Nombre del Equipo:** iem-server
     - **Nombre de Usuario:** iem
     - **Contraseña:** iem2026
     - **Inicio de sesión automático**
+
     <img src="readme_images/install11.png" alt="Instalación Usuarios y Contraseña" height="500">
 7. Proceso de Instalación
     <img src="readme_images/install12.png" alt="Instalación Proceso" height="500">
@@ -52,7 +53,6 @@ Abrir la terminal (Gnome Terminal), empezar la mayoría de los comandos con `sud
     ```bash
     sudo apt-get update
     ```
-
 2. Actualizar los paquetes.
     ```bash
    sudo apt-get upgrade
@@ -67,16 +67,18 @@ Abrir la terminal (Gnome Terminal), empezar la mayoría de los comandos con `sud
         sudo systemctl status apache2
         ```
         * Si se muestra lo siguiente; entonces el servicio no esta corriendo.
-        ```bash
+
+        <pre>
         iem@iem-server:~$ $ sudo systemctl status apache2
-    ○ apache2.service - The Apache HTTP Server
-     Loaded: loaded (/lib/systemd/system/apache2.service; disabled; vendor preset: en>
-     Active: inactive (dead) since Tue 2026-02-17 23:25:24 -04; 2s ago
-       Docs: https://httpd.apache.org/docs/2.4/
-    Process: 7010 ExecStop=/usr/sbin/apachectl graceful-stop (code=exited, status=0/S>
-   Main PID: 6666 (code=exited, status=0/SUCCESS)
-        CPU: 454ms
-        ```
+        ○ apache2.service - The Apache HTTP Server
+         Loaded: loaded (/lib/systemd/system/apache2.service; disabled; vendor preset: en>
+         Active: inactive (dead) since Tue 2026-02-17 23:25:24 -04; 2s ago
+           Docs: https://httpd.apache.org/docs/2.4/
+        Process: 7010 ExecStop=/usr/sbin/apachectl graceful-stop (code=exited, status=0/S>
+       Main PID: 6666 (code=exited, status=0/SUCCESS)
+            CPU: 454ms
+        </pre>
+
         * Activar el servicio y habilitar al momento de arrancar el sistema
             ```bash
             sudo systemctl start apache2
@@ -86,21 +88,23 @@ Abrir la terminal (Gnome Terminal), empezar la mayoría de los comandos con `sud
             ```
         * Verificar nuevamente que el sistema este corriendo (con el primer comando).
         * Se debe obtener la siguiente salida.
-        ```bash
+
+        <pre>
         iem@iem-server:~$ $ sudo systemctl status apache2
-    ● apache2.service - The Apache HTTP Server
-     Loaded: loaded (/lib/systemd/system/apache2.service; enabled; vendor preset: ena>
-     Active: active (running) since Tue 2026-02-17 23:31:09 -04; 28s ago
-       Docs: https://httpd.apache.org/docs/2.4/
-   Main PID: 7037 (apache2)
-      Tasks: 55 (limit: 4184)
-     Memory: 4.8M
-        CPU: 106ms
-     CGroup: /system.slice/apache2.service
-             ├─7037 /usr/sbin/apache2 -k start
-             ├─7038 /usr/sbin/apache2 -k start
-             └─7039 /usr/sbin/apache2 -k start
-        ```
+        ● apache2.service - The Apache HTTP Server
+         Loaded: loaded (/lib/systemd/system/apache2.service; enabled; vendor preset: ena>
+         Active: active (running) since Tue 2026-02-17 23:31:09 -04; 28s ago
+           Docs: https://httpd.apache.org/docs/2.4/
+       Main PID: 7037 (apache2)
+          Tasks: 55 (limit: 4184)
+         Memory: 4.8M
+            CPU: 106ms
+         CGroup: /system.slice/apache2.service
+                 ├─7037 /usr/sbin/apache2 -k start
+                 ├─7038 /usr/sbin/apache2 -k start
+                 └─7039 /usr/sbin/apache2 -k start
+        </pre>
+
    - Como última verificación entrar en un navegador en el mismo equipo (o también desde otro, pero conectado a la misma red)
         * Verificar la dirección IP del servidor.
             ```bash
@@ -131,13 +135,20 @@ Abrir la terminal (Gnome Terminal), empezar la mayoría de los comandos con `sud
         <img src="readme_images/prueba_apache.png" alt="Prueba de funcionamiento del servidor apache" height="500">
 5. Instalación de la Base de Datos.
     - Instalación del paquete.
-        `$ sudo apt-get install mariadb-client mariadb-server`
+        ```bash
+        sudo apt-get install mariadb-client mariadb-server
+        ```
     - Verificar que el servicio de mariaDB este corriendo.
-        `$ sudo systemctl status mariadb`
+        ```bash
+        sudo systemctl status mariadb
+        ```
     - Si no se encuentra **activo** realizar los mismos pasos al de *apache* para su activación.
     - Iniciar la configuración de la Base de Datos (solo por única vez).
-        `$ sudo mysql_secure_installation`
+        ```bash
+        sudo mysql_secure_installation
+        ```
     - Realizar la configuración de la siguiente manera:
+
         <pre>
         ...
         Switch to unix_socket authentication [Y/n] n
@@ -149,17 +160,28 @@ Abrir la terminal (Gnome Terminal), empezar la mayoría de los comandos con `sud
         ...
         Thanks for using MariaDB!
         </pre>
+
     **NOTA:** La Base de Datos de MariaDB se preconfigurado por defecto con la autenticación de *unix_socket*, es decir, que solo se puede acceder a ella mediante `sudo mariabd` introduciendo así la contraseña de usuario del SO.
     - Ingresar a la base de datos de MariaDB.
-        `$ sudo mariadb`
+        ```bash
+        sudo mariadb
+        ```
     - Dentro de MariaDB cambiar el tipo de autenticación.
-        `MariaDB [(none)]> ALTER USER 'root'@'localhost' IDENTIFIED VIA mysql_native_password USING PASSWORD('iem-umsa-2026');`
+        ```
+        ALTER USER 'root'@'localhost' IDENTIFIED VIA mysql_native_password USING PASSWORD('iem-umsa-2026');
+        ```
     - Actualizar privilegios.
-        `MariaDB [(none)]> FLUSH PRIVILEGES;`
+        ```
+        FLUSH PRIVILEGES;
+        ```
     - Salir de MariaDB.
-        `MariaDB [(none)]> exit;`
+        ```
+        exit;
+        ```
     - Volver a ingresar, pero con usuario y contraseña definidos. 
-        `$ mariadb -u root -p`
+        ```bash
+        mariadb -u root -p
+        ```
 6. Instalación de PHP.
 
 
