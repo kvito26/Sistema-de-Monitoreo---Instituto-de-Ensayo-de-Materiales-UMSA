@@ -25,7 +25,11 @@ En este caso se hará el particionado del disco de manera manual, el cual nos da
     <img src="readme_images/install5.png" alt="Instalación Nueva Tabla de Particiones" height="500">
     - Agregar una nueva partición (+). Definir para el sistema EFI 500MB, Primaria, Al principio de este espacio, <<Partición del Sistema EFI>>.
     <img src="readme_images/install6.png" alt="Instalación Partición 1" height="500">
+<<<<<<< HEAD
     - Agregar una nueva partición de Intercambio de 4GB. Tamaño: 4096MB, Primaria, Al principio de este espacio, Utilizar como: área de intercambio. 
+=======
+    - Agregar una nueva partición de Intercambio de 4GB. Tamaño: 4096MB, Primaria, Al principio de este espacio, Utilizar como: área de intercambio.
+>>>>>>> d4ae0702a85be7959d662d94934e74bab22f334c
     <img src="readme_images/install7.png" alt="Instalación Partición 2" height="500">
     - Con el espacio libre restante agregar una nueva partición. Tamaño: 16879MB, Primaria, Al principio de este espacio, Utilizar como: sistema de ficheros ext4 transaccional, Punto de montaje: "/".
     <img src="readme_images/install8.png" alt="Instalación Partición 3" height="500">
@@ -155,3 +159,6 @@ Abrir la terminal (Gnome Terminal), empezar la mayoría de los comandos con `$ s
 
 
 
+    - Volver a ingresar, pero con usuario y contraseña definidos.
+        `$ mariadb -u root -p`
+6. Instalación de PHP.
