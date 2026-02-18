@@ -25,11 +25,8 @@ En este caso se hará el particionado del disco de manera manual, el cual nos da
     <img src="readme_images/install5.png" alt="Instalación Nueva Tabla de Particiones" height="500">
     - Agregar una nueva partición (+). Definir para el sistema EFI 500MB, Primaria, Al principio de este espacio, <<Partición del Sistema EFI>>.
     <img src="readme_images/install6.png" alt="Instalación Partición 1" height="500">
-<<<<<<< HEAD
     - Agregar una nueva partición de Intercambio de 4GB. Tamaño: 4096MB, Primaria, Al principio de este espacio, Utilizar como: área de intercambio. 
-=======
     - Agregar una nueva partición de Intercambio de 4GB. Tamaño: 4096MB, Primaria, Al principio de este espacio, Utilizar como: área de intercambio.
->>>>>>> d4ae0702a85be7959d662d94934e74bab22f334c
     <img src="readme_images/install7.png" alt="Instalación Partición 2" height="500">
     - Con el espacio libre restante agregar una nueva partición. Tamaño: 16879MB, Primaria, Al principio de este espacio, Utilizar como: sistema de ficheros ext4 transaccional, Punto de montaje: "/".
     <img src="readme_images/install8.png" alt="Instalación Partición 3" height="500">
@@ -50,18 +47,27 @@ En este caso se hará el particionado del disco de manera manual, el cual nos da
     <img src="readme_images/install13.png" alt="Instalación Final" height="500">
 
 ## Instalación de LAMP (L por Linux, Apache, MariaDB (o también MySQL), PHP).
-Abrir la terminal (Gnome Terminal), empezar la mayoría de los comandos con `$ sudo`, se muestra en los pasos depende lo que se require hacer.
+Abrir la terminal (Gnome Terminal), empezar la mayoría de los comandos con `sudo`, se muestra en los pasos depende lo que se require hacer.
 1. Actualizar el repositorio de paquetes.
-    `$ sudo apt-get update`
+    ```bash
+    sudo apt-get update
+    ```
+
 2. Actualizar los paquetes.
-    `$ sudo apt-get upgrade`
+    ```bash
+   sudo apt-get upgrade
+    ```
 3. Instalar Apache.
-    `$ sudo apt-get install apache2`
+    ```bash
+    sudo apt-get install apache2
+    ```
 4. Verificar que el servicio de apache este activo/corriendo.
     - Verificar el servicio.
-        `$ sudo systemctl status apache2`
+        ```bash
+        sudo systemctl status apache2
+        ```
         * Si se muestra lo siguiente; entonces el servicio no esta corriendo.
-        <pre>
+        ```bash
         iem@iem-server:~$ $ sudo systemctl status apache2
     ○ apache2.service - The Apache HTTP Server
      Loaded: loaded (/lib/systemd/system/apache2.service; disabled; vendor preset: en>
@@ -70,13 +76,17 @@ Abrir la terminal (Gnome Terminal), empezar la mayoría de los comandos con `$ s
     Process: 7010 ExecStop=/usr/sbin/apachectl graceful-stop (code=exited, status=0/S>
    Main PID: 6666 (code=exited, status=0/SUCCESS)
         CPU: 454ms
-        </pre>
+        ```
         * Activar el servicio y habilitar al momento de arrancar el sistema
-            `$ sudo systemctl start apache2`
-            `$ sudo systemctl enable apache2`
+            ```bash
+            sudo systemctl start apache2
+            ```
+            ```bash
+            sudo systemctl enable apache2
+            ```
         * Verificar nuevamente que el sistema este corriendo (con el primer comando).
         * Se debe obtener la siguiente salida.
-        <pre>
+        ```bash
         iem@iem-server:~$ $ sudo systemctl status apache2
     ● apache2.service - The Apache HTTP Server
      Loaded: loaded (/lib/systemd/system/apache2.service; enabled; vendor preset: ena>
@@ -90,12 +100,14 @@ Abrir la terminal (Gnome Terminal), empezar la mayoría de los comandos con `$ s
              ├─7037 /usr/sbin/apache2 -k start
              ├─7038 /usr/sbin/apache2 -k start
              └─7039 /usr/sbin/apache2 -k start
-        </pre>
+        ```
    - Como última verificación entrar en un navegador en el mismo equipo (o también desde otro, pero conectado a la misma red)
         * Verificar la dirección IP del servidor.
-            `$ ip a`
+            ```bash
+            ip a
+            ```
         * Se obtiene la siguiente salida (para mi red en este caso).
-            <pre>
+            ```bash
             iem@iem-server:~$ ip a
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
@@ -110,7 +122,7 @@ Abrir la terminal (Gnome Terminal), empezar la mayoría de los comandos con `$ s
        valid_lft 1393sec preferred_lft 1393sec
     inet6 fe80::87ba:6d31:aede:cefc/64 scope link noprefixroute
        valid_lft forever preferred_lft forever
-            </pre>
+            ```
         * Por defecto se conoce que la dirección IP interno es: `127.0.0.1`
         * La dirección IP para la red local es: `192.168.148.129`
     - En el navegador *web*, en la barra de direcciones introducir cualquiera de las direcciones IP obtenidas.
@@ -149,16 +161,6 @@ Abrir la terminal (Gnome Terminal), empezar la mayoría de los comandos con `$ s
     - Volver a ingresar, pero con usuario y contraseña definidos. 
         `$ mariadb -u root -p`
 6. Instalación de PHP.
-        
 
 
 
-
-
-
-
-
-
-    - Volver a ingresar, pero con usuario y contraseña definidos.
-        `$ mariadb -u root -p`
-6. Instalación de PHP.
