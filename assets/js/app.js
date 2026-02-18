@@ -20,7 +20,5 @@ document.addEventListener('DOMContentLoaded', (event) => {
 			localStorage.setItem('bsTheme', 'light');
 		}
 		
-		console.log("tema");
-
 	});
 });
