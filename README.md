@@ -15,41 +15,64 @@ Es recomendable tener conexión a internet en el proceso de instalación, para l
 
 1. Bienvenida de Instalación.
 Para esta parte se selecciona el idioma de instalación y que posteriormente será el idioma del SO.
+
 <img src="readme_images/install1.png" alt="Instalación Bienvenida" height="500">
+
 2. Elegir la distribución del teclado.
 Esta opción va depende del teclado físico que se este utilizando, para este caso es un teclado con distribución de Español Latinoamericano.
+
 <img src="readme_images/install2.png" alt="Instalación Distribución del Teclado" height="500">
+
 3. Códecs Multimedia.
 Es recomendable seleccionar esta opción, ya que instala todos los códecs necesarios para la reproducción de audio y video para los distintos formatos existentes.
+
 <img src="readme_images/install3.png" alt="Instalación Códecs Multimedia" height="500">
+
 4. Tipo de Instalación.
 En este caso se hará el particionado del disco de manera manual, el cual nos da la facilidad de agregar el tamaño tanto de la partición root, home (para el usuario) y la partición de intercambio. Entre otras posibilidades.
-<img src="readme_images/install4.png" alt="Instalación Particionado" height="500">
-    - Seleccionar: Nueva tabla de particioines... > Continuar
-    <img src="readme_images/install5.png" alt="Instalación Nueva Tabla de Particiones" height="500">
-    - Agregar una nueva partición (+). Definir para el sistema EFI 500MB, Primaria, Al principio de este espacio, <<Partición del Sistema EFI>>.
-    <img src="readme_images/install6.png" alt="Instalación Partición 1" height="500">
-    - Agregar una nueva partición de Intercambio de 4GB. Tamaño: 4096MB, Primaria, Al principio de este espacio, Utilizar como: área de intercambio.
-    <img src="readme_images/install7.png" alt="Instalación Partición 2" height="500">
-    - Con el espacio libre restante agregar una nueva partición. Tamaño: 16879MB, Primaria, Al principio de este espacio, Utilizar como: sistema de ficheros ext4 transaccional, Punto de montaje: "/".
-    <img src="readme_images/install8.png" alt="Instalación Partición 3" height="500">
-    - Todas las particiones ya realizadas.
-    <img src="readme_images/install9.png" alt="Instalación Partición 4" height="500">
-5. Definir la Región.
-    <img src="readme_images/install10.png" alt="Instalación Región" height="500">
-6. Nombre, Nombre de Usuario, Nombre del Equipo y Contraseña.
 
+<img src="readme_images/install4.png" alt="Instalación Particionado" height="500">
+
+- Seleccionar: Nueva tabla de particioines... > Continuar
+
+<img src="readme_images/install5.png" alt="Instalación Nueva Tabla de Particiones" height="500">
+
+- Agregar una nueva partición (+). Definir para el sistema EFI 500MB, Primaria, Al principio de este espacio, <<Partición del Sistema EFI>>.
+
+<img src="readme_images/install6.png" alt="Instalación Partición 1" height="500">
+
+- Agregar una nueva partición de Intercambio de 4GB. Tamaño: 4096MB, Primaria, Al principio de este espacio, Utilizar como: área de intercambio.
+
+<img src="readme_images/install7.png" alt="Instalación Partición 2" height="500">
+
+- Con el espacio libre restante agregar una nueva partición. Tamaño: 16879MB, Primaria, Al principio de este espacio, Utilizar como: sistema de ficheros ext4 transaccional, Punto de montaje: "/".
+
+<img src="readme_images/install8.png" alt="Instalación Partición 3" height="500">
+
+- Todas las particiones ya realizadas.
+
+<img src="readme_images/install9.png" alt="Instalación Partición 4" height="500">
+
+5. Definir la Región.
+
+<img src="readme_images/install10.png" alt="Instalación Región" height="500">
+
+6. Nombre, Nombre de Usuario, Nombre del Equipo y Contraseña.
     - **Nombre:** Iem
     - **Nombre del Equipo:** iem-server
     - **Nombre de Usuario:** iem
     - **Contraseña:** iem2026
     - **Inicio de sesión automático**
 
-    <img src="readme_images/install11.png" alt="Instalación Usuarios y Contraseña" height="500">
+<img src="readme_images/install11.png" alt="Instalación Usuarios y Contraseña" height="500">
+    
 7. Proceso de Instalación.
-    <img src="readme_images/install12.png" alt="Instalación Proceso" height="500">
+
+<img src="readme_images/install12.png" alt="Instalación Proceso" height="500">
+
 8. Instalación Finalizada y Reinicio.
-    <img src="readme_images/install13.png" alt="Instalación Final" height="500">
+
+<img src="readme_images/install13.png" alt="Instalación Final" height="500">
 
 ## Instalación de LAMP (L por Linux, Apache, MariaDB (o también MySQL), PHP).
 Abrir la terminal (Gnome Terminal), empezar la mayoría de los comandos con `sudo`, se muestra en los pasos depende lo que se require hacer.
