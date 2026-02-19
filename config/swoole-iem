@@ -1,0 +1,32 @@
+/var/www/umsa-iem/var/log/swoole/*.log{
+	#si alguno de los archivos listados arriba no existe, entonces saltar
+	missingok 
+	
+	#si el archivo existe, pero esta vacio no rotarlo
+	notifempty
+
+	#frecuencia de rotacion
+	daily 
+
+	#mantener 30 dias de logs
+	rotate 30 
+
+	#comprimir los logs antiguos y no comprimir inmediatamente
+	compress
+	delaycompress
+
+	#tamagno maximo antes de hacer la rotacion
+	maxsize 50M
+
+	#tamagno minimo antes de hacer la rotacion (no rota)
+	minsize 10M
+
+	#permisos para el nuevo archivo 
+	create 0644 www-data www-data	
+
+	#cargargar el servicio despues de rotar
+	sharedscripts
+	postrotate
+		systemctl reload swoole-iem > /dev/null 2>&1 || true
+	endscript
+}
