@@ -75,7 +75,7 @@ En este caso se hará el particionado del disco de manera manual, el cual nos da
 <img src="readme_images/install13.png" alt="Instalación Final" height="500">
 
 ## Instalación de LAMP (L por Linux, Apache, MariaDB (o también MySQL), PHP).
-Abrir la terminal (Gnome Terminal), empezar la mayoría de los comandos con `sudo`, se muestra en los pasos depende lo que se require hacer.
+Abrir la terminal (Gnome Terminal), empezar la mayoría de los comandos con `sudo`, se muestra en los pasos depende lo que se require hacer. Para este proyecto se hace uso de MariaDB por la facilidad de la instalación y por la compatibilidad con MySQL (ya que es un *fork* de éste).
 1. Actualizar el repositorio de paquetes.
     ```bash
     sudo apt-get update
@@ -211,7 +211,97 @@ Abrir la terminal (Gnome Terminal), empezar la mayoría de los comandos con `sud
         ```bash
         mariadb -u root -p
         ```
-6. Instalación de PHP.
+6. Instalación de PHP (php 8.1)
+    - Instalación del paquete.
+        ```bash
+        sudo apt-get install php libapache2-mod-php php-mysql
+        ```
+    - Una vez realizado la instalación verificar la version de *php*.
+        ```bash
+        php -v
+        ```
+    - Se tiene que observar la siguiente salida:
+        
+        <pre>
+        PHP 8.1.2-1ubuntu2.23 (cli) (built: Jan  7 2026 08:37:41) (NTS)
+        Copyright (c) The PHP Group
+        Zend Engine v4.1.2, Copyright (c) Zend Technologies
+        with Zend OPcache v8.1.2-1ubuntu2.23, Copyright (c), by Zend Technologies
+        </pre>
+
+## Instalación de Módulos de PHP, Configuración de Apache y Puesta en Marcha de la *Página Web*
+Para este aparate se realiza la configuración del servidor Apache (cambio de directorio *root*) para el alojamiento del archivo `index.php`, y los modulos necesarios para PHP tanto para la gestión de la base de datos y las plantillas para la interfaz de usuario con *Twig*.
+1. Clonación de repositorio e instalación de módulos de *PHP* con *composer*.
+    - Clonar el repositorio y remover archivos (para reinstalación posterior).
+        ```bash
+        sudo git clone https://github.com/kvito26/Sistema-de-Monitoreo---Instituto-de-Ensayo-de-Materiales-UMSA.git && sudo mv Sistema-de-Monitoreo---Instituto-de-Ensayo-de-Materiales-UMSA/ umsa-iem && sudo chown -R iem:iem umsa-iem/ && cd umsa-iem/ && rm -vr node_modules/ composer.json composer.lock package.json package-lock.json vendor/ 
+        ```
+    - Instalación de *composer*. Se realiza mediante la página oficial de *composer* en la sección de [descarga](https://getcomposer.org/download/).
+        ```bash
+        php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+        php -r "if (hash_file('sha384', 'composer-setup.php') === 'c8b085408188070d5f52bcfe4ecfbee5f727afa458b2573b8eaaf77b3419b0bf2768dc67c86944da1544f06fa544fd47') { echo 'Installer verified'.PHP_EOL; } else { echo 'Installer corrupt'.PHP_EOL; unlink('composer-setup.php'); exit(1); }"
+        php composer-setup.php
+        php -r "unlink('composer-setup.php');"
+        ```
+    - Mover *composer* al directorio de binarios para poder acceder a él desde cualquier parte.
+        ```bash
+        sudo mv composer.phar /usr/local/bin/composer
+        ```
+    - Crear el archivo `composer.json` y copiar lo siguiente dentro de él.
+        ```bash
+        touch composer.json && nano composer.json
+        ```
+        <pre>
+        {
+            "autoload": {
+                "psr-4": {
+                    "Iem\\": "src"
+                }
+            }
+        }
+        </pre>
+        Ejecutar el siguiente comando:
+        ```bash
+        composer dump-autoload
+        ```
+    - Instalción de módulos *PHP* necesarios para el proyecto.
+        ```bash
+        composer require twig/twig
+        ```
+        ```bash
+        composer require doctrine/orm
+        ```
+        ```bash
+        composer require symfony/cache
+        ```
+        ```bash
+        composer require symfony/dotenv
+        ```
+2. Configuración del servidor Apache
+    - Ir al directorio de configuraciones de Apache.
+        ```bash
+        cd /etc/apache2/sites-available/
+        ```
+    - Editar el archivo `000-default.conf` de la siguiente manera:
+        ```bash
+        sudo nano 000-default.conf
+        ```
+        ```
+        <VirtualHost *:80>
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/umsa-iem/public
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+        </VirtualHost>
+        ```
+    - Reiniciar el servidor *Apache*.
+        ```bash
+        sudo systemctl restart apache2
+        ```
+
+         
 
 
 

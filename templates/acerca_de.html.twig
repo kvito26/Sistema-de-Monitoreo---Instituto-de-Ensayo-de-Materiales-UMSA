@@ -5,8 +5,195 @@
 
 {% block body %}
 <div class="container mt-5">
-	<h2 class="text-center">Acerca de</h2>
+	<h2 class="text-center">Acerca del Sistema de Climatización</h2>
 
+<p>El sistema de climatización en los ambientes 1 y 2 está diseñado para el control de temperatura y humedad en ambientes cerrados, garantizando condiciones óptimas de confort según los requerimientos del usuario. El sistema utiliza aire exterior, el cual es tratado y calentado internamente para adaptarse a los parámetros definidos por el usuario. 
+<br>
+La operación, control y supervisión del sistema se realiza mediante una pantalla táctil ubicada en el acceso a los ambientes, que permite al operador configurar parámetros, iniciar o detener el funcionamiento y monitorear el estado del sistema. Adicionalmente, el sistema puede ser controlado de forma remota desde un dispositivo móvil, siempre que este se encuentre conectado a la misma red inalámbrica (Wi-Fi), lo que brinda mayor flexibilidad y facilidad de operación. En la Figura 1 se presenta la ventana de inicio que permite visualizar los ambientes registrados en el sistema.</p>
+<figure data-latex-placement="H">
+<img src="capturas_iem/principal_dark.png" />
+<figcaption>Ventana de inicio</figcaption>
+</figure>
+<p>En la Figura 2 se presentan los detalles del control para cada
+ambiente. El sistema puede operar en modo manual, en el cual se debe
+encender primero el calefactor y luego el ventilador para alcanzar la
+temperatura deseada. Además, el modo automático permite que el sistema
+alcance y mantenga una temperatura de 25 [°C] y una humedad relativa del
+55%.</p>
+<figure data-latex-placement="H">
+<img src="capturas_iem/amb1_dark_auto.png" />
+<figcaption>Ventana de detalles</figcaption>
+</figure>
+<h1 id="características-del-sistema-de-climatización">Características
+del sistema de climatización</h1>
+<p>Las características del sistema de climatización se presentan en la
+Tabla 1.</p>
+<figure data-latex-placement="H">
+<img src="tabla1.png" style="width: 60.0%"/>
+</figure>
+<figure data-latex-placement="H">
+<img src="ducto2.png" style="width:60.0%" />
+<figcaption>Sistema de climatización Bara 1</figcaption>
+</figure>
+<figure data-latex-placement="H">
+<img src="ducto1.png" />
+<figcaption>Sistema de climatización Bara 2</figcaption>
+</figure>
+<h1 id="panel-de-control">Panel de control</h1>
+<p>La interfaz hombre-máquina (HMI) consta de una pantalla táctil de
+alta resolución situada estratégicamente en el acceso a los laboratorios
+Bara 1 y Bara 2. El panel de control se divide en tres zonas
+funcionales:</p>
+<figure id="fig:placeholder" data-latex-placement="H">
+<img src="capturas_iem/principal_light.png" style="width:100.0%" />
+<figcaption>Ventana de inicio de la interfaz del sistema.</figcaption>
+</figure>
+<ol>
+<li><p><strong>Barra de estado superior:</strong> Muestra el logo del
+instituto en la parte superior izquierda. En el centro se encuentra la
+sección para la selección de ambiente y la generación de reportes. En la
+parte superior derecha está el control para cambiar el tema de claro a
+oscuro y viceversa.</p></li>
+<li><p><strong>Área de visualización principal:</strong> Presenta en
+tiempo real las variables de proceso actuales: Temperatura en [°C] y
+Humedad Relativa [%], junto con la hora, fecha y el momento de la última
+lectura.</p></li>
+<li><p><strong>Barra de navegación inferior:</strong> Aquí se muestran
+los estados del sistema (ventilador, calentador, nivel de agua y
+humidificador). En la parte inferior de estos indicadores se encuentran
+los botones de “Detalles” y “Parar” El botón “Detalles” permite el
+acceso a los menús de configuración, mientras que “Parar” ejecuta la
+parada del sistema por ambiente respectivamente.</p></li>
+</ol>
+<p>La interfaz ha sido diseñada bajo principios de ergonomía visual,
+utilizando códigos de colores para indicar el estado operativo: Verde
+(Funcionamiento normal), Amarillo (Advertencia/Pre-alarma) y Rojo (Fallo
+crítico o Parada).</p>
+<h1 id="procedimientos-de-operación">Procedimientos de operación</h1>
+<p>Para garantizar la integridad del equipo y la seguridad del usuario,
+se deben seguir estrictamente los procedimientos que se detallan a
+continuación.</p>
+<h2 id="encendido-del-sistema">Encendido del sistema</h2>
+<p>Verifique que el interruptor principal de energía esté en la posición
+ON. Posteriormente, presione el botón de encendido. Al iniciar, la
+pantalla cargará el sistema operativo y mostrará la "Ventana de Inicio"
+(Fig. 1). Seleccione el ambiente deseado (Bara 1 o Bara 2) para acceder
+al control.</p>
+<h2 id="modo-automático">Modo Automático</h2>
+<p>Este es el modo recomendado para la operación estándar.</p>
+<figure id="fig:placeholder" data-latex-placement="H">
+<img src="capturas_iem/amb1_light_auto.png" style="width:100.0%" />
+<figcaption>Ventana de Control Automático</figcaption>
+</figure>
+<ul>
+<li><p>Seleccione el botón <strong>“Control Automático”</strong> en la
+pantalla.</p></li>
+<li><p>El sistema ajustará automáticamente los actuadores para converger
+a los valores predefinidos: <strong>Setpoint T: 25°C</strong> y
+<strong>Setpoint H: 55%</strong> (a modo de ejemplo).</p></li>
+<li><p>El código interno del sistema modulará el encendido y apagado del
+calefactor, así como la velocidad del ventilador, para minimizar el
+error en estado estacionario.</p></li>
+</ul>
+<h2 id="modo-manual">Modo Manual</h2>
+<p>Este modo permite el control directo de los actuadores para realizar
+pruebas o atender condiciones específicas.</p>
+<figure data-latex-placement="H">
+<img src="capturas_iem/amb1_light_man.png" style="width:100.0%" />
+<figcaption>Ventana de Control Manual</figcaption>
+</figure>
+<ul>
+<li><p><strong>Precaución crítica:</strong> Para evitar el
+sobrecalentamiento de las resistencias, el usuario debe tomar las
+precauciones necesarias al realizar ajustes o pruebas.</p></li>
+<li><p><strong>Paso 1:</strong> Active el <strong>Ventilador</strong> y
+ajuste la velocidad deseada.</p></li>
+<li><p><strong>Paso 2:</strong> Una vez que haya confirmado un flujo de
+aire adecuado, active el <strong>Calentador</strong>.</p></li>
+<li><p><strong>Paso 3:</strong> Encienda el
+<strong>Humidificador</strong>.</p></li>
+<li><p>Para apagar en modo manual, realice el proceso inverso: apague
+primero el calentador, espere 30 segundos para la disipación térmica y,
+finalmente, apague el ventilador.</p></li>
+<li><p>Es posible invertir el orden de encendido, activando primero el
+calentador y después el ventilador. Sin embargo, debe tenerse especial
+cuidado, ya que esta secuencia puede provocar el sobrecalentamiento de
+la resistencia de calefacción y dañar el sistema. Si se opta por este
+procedimiento, se recomienda calentar la resistencia durante no más de
+20 segundos antes de encender el ventilador.</p></li>
+</ul>
+<h2 id="control-remoto">Control Remoto</h2>
+<p>Asegúrese de que el dispositivo móvil esté conectado a la misma
+subred Wi-Fi que el sistema. Abra la aplicación dedicada mediante la
+dirección IP del servidor, ingrese las credenciales de usuario y
+seleccione el equipo a controlar.</p>
+<h1 id="mantenimiento-y-monitoreo">Mantenimiento y monitoreo</h1>
+<p>El mantenimiento preventivo es crucial para asegurar la eficiencia
+energética del sistema.</p>
+<h2 id="plan-de-mantenimiento">Plan de mantenimiento</h2>
+<ul>
+<li><p><strong>Mensual:</strong> Inspección visual de los filtros de
+entrada y salida de aire, y verificación del tanque de agua del
+humidificador. Limpieza o reemplazo si es requerido.</p></li>
+<li><p><strong>Trimestral:</strong> Verificación del funcionamiento del
+sistema, tanto a nivel de software como de hardware.</p></li>
+<li><p><strong>Semestral:</strong> Limpieza de las unidades
+condensadoras ubicadas en el techo (Rooftop) y verificación de los
+drenajes de condensado. Ajuste de las borneras eléctricas en el tablero
+de control.</p></li>
+</ul>
+<h2 id="monitoreo-de-variables">Monitoreo de variables</h2>
+<p>El sistema almacena un registro histórico de las últimas horas de
+operación. Estos datos pueden visualizarse a través de la ventana de
+reportes, a la que se accede desde el panel de control, tal como se
+muestra en la imagen a continuación.</p>
+<figure id="fig:placeholder" data-latex-placement="H">
+<img src="capturas_iem/reportes_light.png" style="width:100.0%" />
+<figcaption>Ventana de Reportes</figcaption>
+</figure>
+<h1 id="símbolos-y-alarmas">Símbolos y alarmas</h1>
+<p>El sistema cuenta con una serie de símbolos y alarmas para informar
+al operador sobre su estado y las precauciones necesarias. A
+continuación, se detallan los mismos.</p>
+<figure data-latex-placement="H">
+<img src="tabla2.png" style="width: 80.0%"/>
+</figure>
+<figure data-latex-placement="H">
+<img src="tabla3.png" style="width: 80.0%"/>
+</figure>
+<p>Si el sistema no responde a los comandos táctiles, realice un
+reinicio físico desconectando la alimentación principal durante 10
+segundos.</p>
+<h1 id="seguridad-y-precauciones">Seguridad y precauciones</h1>
+<ul>
+<li><p><strong>Riesgo Eléctrico:</strong> El equipo opera con tensiones
+peligrosas. Solo el personal certificado debe abrir el gabinete de
+control.</p></li>
+<li><p><strong>Superficies Calientes:</strong> En modo calefacción, las
+salidas de aire y las resistencias internas pueden alcanzar temperaturas
+elevadas. Evite el contacto directo.</p></li>
+<li><p><strong>Obstrucciones:</strong> No cubra ni bloquee las rejillas
+de toma de aire exterior ni los difusores de suministro en el ambiente,
+ya que esto puede causar daños irreversibles a los ventiladores o a las
+resistencias.</p></li>
+</ul>
+<h1 id="especificaciones-técnicas">Especificaciones técnicas</h1>
+<p>Resumen de las características técnicas del sistema instalado:</p>
+<ul>
+<li><p><strong>Alimentación eléctrica:</strong> 220 VAC</p></li>
+<li><p><strong>Potencia térmica (Calefacción):</strong> 2 kW.</p></li>
+<li><p><strong>Rango de operación (Temperatura):</strong> 10°C a
+35°C.</p></li>
+<li><p><strong>Conectividad:</strong> Wi-Fi</p></li>
+</ul>
+<h1 id="contacto-y-soporte">Contacto y soporte</h1>
+<p>Para asistencia técnica, repuestos o consultas sobre la garantía, por
+favor contacte al departamento de ingeniería:</p>
+<ul>
+<li><p><strong>Contacto:</strong> Ing. Eloy Cristian Saravia</p></li>
+<li><p><strong>Teléfono:</strong> 79557603</p></li>
+<li><p><strong>Correo:</strong> cris.sa@baratronics.com</p></li>
+</ul>
 
 </div>
 {% endblock %}
